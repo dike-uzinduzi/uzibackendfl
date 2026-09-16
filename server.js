@@ -244,6 +244,7 @@ app.use("/api/artists",            require("./routes/artistRoutes"));
 app.use("/api/albums/:albumId/launch", require("./routes/albumLaunchRoutes"));
 app.use("/api/albums",             require("./routes/albumRoutes"));
 app.use("/api/tracks",             require("./routes/trackRoutes"));
+app.use("/api/plaque-tiers", require("./routes/plaqueTierRoutes"));
 app.use("/api/genres",             require("./routes/genreRoutes"));
 app.use("/api/plaques",            require("./routes/plaqueRoutes"));
 app.use("/api/profiles",           require("./routes/profileRoutes"));
