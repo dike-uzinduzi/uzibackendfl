@@ -157,7 +157,128 @@ async function supportAlbum({
 
   return { payment, plaque, launchIsActive, launchStatus: status, isDemo };
 }
+// services/supportService.js — add this below supportAlbum
 
-module.exports = { supportAlbum, pickTier, plaqueImageFor };
+/**
+ * For real (non-demo) fans paying through Pesepay.
+ * Creates a PENDING Payment and PENDING_PAYMENT Plaque.
+ * The actual charge happens through Pesepay; fulfillment happens
+ * in pesepayService._fulfill when the payment confirms.
+ */
+async function createPesepaySupport({
+  albumId,
+  userId,
+  amount,
+  currency,
+  paymentMethod,      // "ECOCASH" | "PESEPAY"
+  paymentMethodCode,  // e.g. "PZW211" for EcoCash
+  customerPhone,
+  customerEmail,
+  shippingAddress,
+}) {
+  if (!amount || Number(amount) <= 0) throw new Error("Amount must be greater than zero");
+  if (!currency) throw new Error("Currency is required");
 
+  const album = await Album.findByPk(albumId, {
+    include: [{ model: AlbumLaunch, as: "launch" }],
+  });
+  if (!album) throw new Error("Album not found");
+
+  const launch = album.launch;
+  const status = launchService.effectiveStatus(launch);
+  const launchIsActive = status === "active";
+
+  // Compute tier and pre-create the Plaque in PENDING_PAYMENT
+  let plaque = null;
+  let tier = null;
+
+  if (launchIsActive) {
+    tier = await pickTier(amount);
+  }
+
+  // Build the album/artist names for the Pesepay reason
+  const { Artist } = require("../models");
+  const artist = await Artist.findByPk(album.artistId, { attributes: ["name", "stageName"] });
+  const artistName = artist?.stageName || artist?.name || "the artist";
+
+  // Initiate the payment with Pesepay
+  const pesepayService = require("./pesepayService");
+
+  let paymentResponse;
+
+  if (paymentMethod === "ECOCASH") {
+    // Seamless — pushes to the fan's phone
+    paymentResponse = await pesepayService.initiateSeamlessPayment({
+      amount,
+      userId,
+      email: customerEmail,
+      phone: customerPhone,
+      albumId,
+      plaqueType: tier,
+      paymentMethodCode: paymentMethodCode || "PZW211",
+      requiredFields: {
+        customerPhoneNumber: customerPhone,
+      },
+      currencyCode: currency,
+      albumTitle: album.title,
+      artistName,
+    });
+  } else {
+    // Pesepay redirect — hosted page with all methods
+    paymentResponse = await pesepayService.initiatePlaquePurchase({
+      amount,
+      userId,
+      email: customerEmail,
+      phone: customerPhone,
+      albumId,
+      plaqueType: tier,
+      currencyCode: currency,
+      albumTitle: album.title,
+      artistName,
+    });
+  }
+
+  // The payment record is already created inside pesepayService.
+  // Find it to pre-create the plaque linked to it.
+  const { Payment } = require("../models");
+  const payment = await Payment.findOne({
+    where: { referenceNumber: paymentResponse.referenceNumber },
+  });
+
+  if (payment && tier && launchIsActive) {
+    const serialService = require("./serialService");
+    const serialNumber = await serialService.generateSerialNumber(tier);
+    const verificationCode = serialService.generateVerificationCode();
+    const imageUrl = await plaqueImageFor(tier);
+
+    plaque = await Plaque.create({
+      serialNumber,
+      verificationCode,
+      plaqueType: tier,
+      plaqueImageUrl: imageUrl,
+      amount,
+      ownerType: "FAN",
+      ownerId: userId,
+      albumId,
+      artistId: album.artistId,
+      paymentId: payment.id,
+      status: "PENDING_PAYMENT",
+      isVerified: true,
+      shippingAddress: shippingAddress ? JSON.stringify(shippingAddress) : "",
+    });
+  }
+
+  return {
+    success: true,
+    provider: paymentMethod,
+    referenceNumber: paymentResponse.referenceNumber,
+    redirectUrl: paymentResponse.redirectUrl || null,
+    pollUrl: paymentResponse.pollUrl || null,
+    plaque,
+    launchIsActive,
+    launchStatus: status,
+  };
+}
+
+module.exports = { supportAlbum, pickTier, plaqueImageFor, createPesepaySupport };
 
