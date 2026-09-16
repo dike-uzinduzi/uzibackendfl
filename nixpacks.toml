@@ -1,2 +1,2 @@
-[nixpacks]
+[phases.setup]
 nixpkgsArchive = "bf744fe90419885eefced41b3e5ae442d732712d"
