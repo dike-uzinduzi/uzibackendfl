@@ -279,33 +279,37 @@ const snapshot = await this._snapshotPlaqueDecision(albumId, amount);
    * GET /api/payments/status/:referenceNumber
    * Unified status endpoint.
    */
-  async checkPaymentStatus(req, res) {
-    try {
-      const { referenceNumber } = req.params;
-
-      if (!referenceNumber) {
-        return res.status(400).json({ success: false, message: "referenceNumber is required" });
-      }
-
-      const payment = await Payment.findOne({ where: { referenceNumber } });
-      if (!payment) {
-        return res.status(404).json({ success: false, message: "Payment not found" });
-      }
-
-      const provider = this._providerOf(payment);
-
-      if (provider === "ECOCASH") {
-        const result = await ecocashService.checkPaymentStatus(referenceNumber);
-        return res.status(200).json({ success: true, provider: "ECOCASH", payment: result });
-      }
-
-      const result = await pesepayService.checkPaymentStatus(referenceNumber);
-      return res.status(200).json({ success: true, provider: "PESEPAY", ...result });
-    } catch (error) {
-      console.error("checkPaymentStatus error:", error?.response?.data ?? error.message);
-      res.status(500).json({ success: false, message: error.message });
+async checkPaymentStatus(req, res) {
+  try {
+    const { referenceNumber } = req.params;
+    if (!referenceNumber) {
+      return res.status(400).json({ success: false, message: "referenceNumber is required" });
     }
+
+    const payment = await Payment.findOne({ where: { referenceNumber } });
+    if (!payment) {
+      return res.status(404).json({ success: false, message: "Payment not found" });
+    }
+
+    // Include the associated plaque if it exists
+    const plaque = await Plaque.findOne({
+      where: { paymentId: payment.id },
+      attributes: ["serialNumber", "plaqueType", "plaqueImageUrl", "status", "amount"],
+    });
+
+    const result = await pesepayService.checkPaymentStatus(referenceNumber);
+
+    return res.status(200).json({
+      success: true,
+      provider: "PESEPAY",
+      ...result,
+      plaque,
+    });
+  } catch (error) {
+    console.error("checkPaymentStatus error:", error?.response?.data ?? error.message);
+    res.status(500).json({ success: false, message: error.message });
   }
+}
 
   /**
    * POST /api/payments/poll-status
