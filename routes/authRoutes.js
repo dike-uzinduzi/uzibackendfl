@@ -1,11 +1,7 @@
 require("dotenv").config(); 
 const express = require("express");
 const router = express.Router();
-const { requireSignupPending } = require("../middleware/requireScope");
-const { rejectSignupPending } = require("../middleware/requireScope");
-
 const authController = require("../controllers/authController");
-const authService = require("../services/authService");
 const {
   authMiddleware,
   superAdminMiddleware,
@@ -217,41 +213,6 @@ router.post("/login", authController.login);
  *         description: User profile retrieved successfully
  */
 router.get("/me", authMiddleware, authController.getCurrentUser);
-
-/**
- * @swagger
- * /api/auth/social-complete:
- *   patch:
- *     summary: Complete signup after social login (set username + role)
- *     tags: [Authentication]
- *     security:
- *       - bearerAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - userName
- *               - role
- *             properties:
- *               userName:
- *                 type: string
- *                 example: "dike_mahoko"
- *               role:
- *                 type: string
- *                 enum: [fan, artist, producer, manager, sponsor]
- *                 example: "fan"
- *     responses:
- *       200:
- *         description: Social signup completed successfully
- *       400:
- *         description: Validation error
- *       401:
- *         description: Unauthorized
- */
-router.patch("/social-complete", authMiddleware, authController.socialComplete);
 
 
 /**
