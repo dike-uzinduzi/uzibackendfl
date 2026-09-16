@@ -21,7 +21,7 @@ const allowedOrigins = [
 
 const app = express();
 const isProduction = process.env.NODE_ENV === "production";
-const isRender     = process.env.RENDER === "true";
+const isRender = process.env.RENDER === "true";
 app.set("trust proxy", 1);
 
 // ─── 1. CORS ──────────────────────────────────────────────────────────────────
@@ -107,7 +107,7 @@ initializeDatabase();
 
 // ─── 6. Swagger ───────────────────────────────────────────────────────────────
 const localhostURL = "http://localhost:5000";
-const renderURL    = process.env.RENDER_EXTERNAL_URL || "https://nodejsbackenduzi-56pi.onrender.com";
+const renderURL = "https://api.uzinduziafrica.com/";
 const currentServerUrl = isRender || isProduction ? renderURL : localhostURL;
 
 const swaggerOptions = {
@@ -127,89 +127,89 @@ const swaggerOptions = {
         User: {
           type: "object",
           properties: {
-            id:              { type: "string", format: "uuid" },
-            userName:        { type: "string" },
-            email:           { type: "string", format: "email" },
-            role:            { type: "string", enum: ["fan","artist","admin","super_admin","producer","artist_manager","corporate","promoter","talent_manager"] },
+            id: { type: "string", format: "uuid" },
+            userName: { type: "string" },
+            email: { type: "string", format: "email" },
+            role: { type: "string", enum: ["fan", "artist", "admin", "super_admin", "producer", "artist_manager", "corporate", "promoter", "talent_manager"] },
             isEmailVerified: { type: "boolean" },
-            createdAt:       { type: "string", format: "date-time" },
+            createdAt: { type: "string", format: "date-time" },
           },
         },
         Artist: {
           type: "object",
           properties: {
-            id:                { type: "string", format: "uuid" },
-            name:              { type: "string" },
-            bio:               { type: "string" },
+            id: { type: "string", format: "uuid" },
+            name: { type: "string" },
+            bio: { type: "string" },
             profilePictureUrl: { type: "string" },
-            cover_photo:       { type: "string" },
+            cover_photo: { type: "string" },
           },
         },
         Album: {
           type: "object",
           properties: {
-            id:           { type: "string", format: "uuid" },
-            title:        { type: "string" },
+            id: { type: "string", format: "uuid" },
+            title: { type: "string" },
             release_date: { type: "string", format: "date-time" },
-            cover_art:    { type: "string" },
-            description:  { type: "string" },
-            albumType:    { type: "string", enum: ["album","ep","single","mixtape","playlist"] },
+            cover_art: { type: "string" },
+            description: { type: "string" },
+            albumType: { type: "string", enum: ["album", "ep", "single", "mixtape", "playlist"] },
             is_published: { type: "boolean" },
-            viewCount:    { type: "integer" },
+            viewCount: { type: "integer" },
           },
         },
         Track: {
           type: "object",
           properties: {
-            id:         { type: "string", format: "uuid" },
-            title:      { type: "string" },
+            id: { type: "string", format: "uuid" },
+            title: { type: "string" },
             durationMs: { type: "integer" },
-            likeCount:  { type: "integer" },
-            albumId:    { type: "string", format: "uuid" },
+            likeCount: { type: "integer" },
+            albumId: { type: "string", format: "uuid" },
           },
         },
         Plaque: {
           type: "object",
           properties: {
-            id:              { type: "string", format: "uuid" },
-            plaqueType:      { type: "string" },
-            amount:          { type: "number" },
-            paymentMethod:   { type: "string" },
-            paymentStatus:   { type: "string", enum: ["pending","paid","failed","cancelled"] },
-            digital_hash:    { type: "string" },
+            id: { type: "string", format: "uuid" },
+            plaqueType: { type: "string" },
+            amount: { type: "number" },
+            paymentMethod: { type: "string" },
+            paymentStatus: { type: "string", enum: ["pending", "paid", "failed", "cancelled"] },
+            digital_hash: { type: "string" },
             shippingAddress: { type: "object" },
-            paidAt:          { type: "string", format: "date-time" },
+            paidAt: { type: "string", format: "date-time" },
           },
         },
         Payment: {
           type: "object",
           properties: {
-            id:              { type: "string", format: "uuid" },
+            id: { type: "string", format: "uuid" },
             referenceNumber: { type: "string" },
-            status:          { type: "string", enum: ["PENDING","SUCCESS","FAILED","SETTLEMENT_COMPLETED","PAID"] },
-            amount:          { type: "number" },
-            currency:        { type: "string" },
-            paymentMethod:   { type: "string" },
-            paid:            { type: "boolean" },
+            status: { type: "string", enum: ["PENDING", "SUCCESS", "FAILED", "SETTLEMENT_COMPLETED", "PAID"] },
+            amount: { type: "number" },
+            currency: { type: "string" },
+            paymentMethod: { type: "string" },
+            paid: { type: "boolean" },
           },
         },
         Genre: {
           type: "object",
           properties: {
-            id:   { type: "string", format: "uuid" },
+            id: { type: "string", format: "uuid" },
             name: { type: "string" },
           },
         },
         News: {
           type: "object",
           properties: {
-            id:          { type: "string", format: "uuid" },
-            title:       { type: "string" },
+            id: { type: "string", format: "uuid" },
+            title: { type: "string" },
             description: { type: "string" },
-            category:    { type: "string", enum: ["Announcements","Update","Alert"] },
-            image:       { type: "string" },
-            is_published:{ type: "boolean" },
-            expires_at:  { type: "string", format: "date-time" },
+            category: { type: "string", enum: ["Announcements", "Update", "Alert"] },
+            image: { type: "string" },
+            is_published: { type: "boolean" },
+            expires_at: { type: "string", format: "date-time" },
           },
         },
       },
@@ -237,22 +237,22 @@ if (!isProduction) {
 }
 
 // ─── 8. API Routes ────────────────────────────────────────────────────────────
-app.use("/api/auth",               authLimiter, require("./routes/authRoutes"));
+app.use("/api/auth", authLimiter, require("./routes/authRoutes"));
 app.use("/api/users", require("./routes/media.routes"));
-app.use("/api/users",              require("./routes/userRoutes"));
-app.use("/api/artists",            require("./routes/artistRoutes"));
+app.use("/api/users", require("./routes/userRoutes"));
+app.use("/api/artists", require("./routes/artistRoutes"));
 app.use("/api/albums/:albumId/launch", require("./routes/albumLaunchRoutes"));
-app.use("/api/albums",             require("./routes/albumRoutes"));
-app.use("/api/tracks",             require("./routes/trackRoutes"));
+app.use("/api/albums", require("./routes/albumRoutes"));
+app.use("/api/tracks", require("./routes/trackRoutes"));
 app.use("/api/plaque-tiers", require("./routes/plaqueTierRoutes"));
-app.use("/api/genres",             require("./routes/genreRoutes"));
-app.use("/api/plaques",            require("./routes/plaqueRoutes"));
-app.use("/api/profiles",           require("./routes/profileRoutes"));
-app.use("/api/news",               require("./routes/newsRoutes"));
-app.use("/api/payments",           require("./routes/paymentRoutes"));
+app.use("/api/genres", require("./routes/genreRoutes"));
+app.use("/api/plaques", require("./routes/plaqueRoutes"));
+app.use("/api/profiles", require("./routes/profileRoutes"));
+app.use("/api/news", require("./routes/newsRoutes"));
+app.use("/api/payments", require("./routes/paymentRoutes"));
 app.use("/api/corporate-profiles", require("./routes/corporateProfileRoutes"));
-app.use("/api/interactions",       require("./routes/interactionsRoutes"));
-app.use("/api/upload",             require("./routes/uploadRoutes"));
+app.use("/api/interactions", require("./routes/interactionsRoutes"));
+app.use("/api/upload", require("./routes/uploadRoutes"));
 app.use("/api/engagement", require("./routes/engagementRoutes"));
 // ─── 9. Health & Root ─────────────────────────────────────────────────────────
 app.get("/health", (req, res) => {
