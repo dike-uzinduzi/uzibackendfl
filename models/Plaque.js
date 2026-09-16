@@ -2,8 +2,14 @@ const { DataTypes, Op } = require("sequelize");
 const sequelize = require("../config/database");
 const { DEFAULT_PLAQUE_IMAGE } = require("./constants/media");
 
-const PLAQUE_TYPES = ["SILVER", "GOLD", "SAPPHIRE", "EMERALD", "CRIMSON"];
-
+const PLAQUE_TYPES = [
+  "WOOD",
+  "CRIMSON",
+  "SAPPHIRE",
+  "EMERALD",
+  "SILVER",
+  "GOLD",
+];
 const PLAQUE_STATUSES = [
   "PENDING_PAYMENT",
   "PAID",
@@ -31,9 +37,9 @@ const Plaque = sequelize.define(
       allowNull: false,
       validate: {
         is: {
-          args: /^UZI-(SILVER|GOLD|SAPPHIRE|EMERALD|CRIMSON)-\d{2}-[2-9A-HJKMNP-TV-Z]{6}$/,
-          msg: "Invalid serial format",
-        },
+        args: new RegExp(
+        `^UZI-(${PLAQUE_TYPES.join("|")})-\\d{2}-[2-9A-HJKMNP-TV-Z]{6}$`
+      ),}
       },
     },
 

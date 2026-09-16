@@ -4,7 +4,8 @@ const User             = require("./User");
 const Profile          = require("./Profile");
 const Artist           = require("./Artist");
 const CorporateProfile = require("./CorporateProfile");
-
+const PlaqueTier = require("./PlaqueTier");
+const AlbumLike = require("./AlbumLike");
 const OtpToken     = require("./OtpToken");
 const RefreshToken = require("./RefreshToken");
 
@@ -155,12 +156,19 @@ User.hasMany(News, { foreignKey: "authorId", onDelete: "SET NULL" });
 News.belongsTo(User, { foreignKey: "authorId", as: "author" });
 
 // ────────────────────────────────────────────────────────────
+// Album <-> AlbumLike
+User.hasMany(AlbumLike, { foreignKey: "userId", onDelete: "CASCADE" });
+AlbumLike.belongsTo(User, { foreignKey: "userId" });
 
+Album.hasMany(AlbumLike, { foreignKey: "albumId", onDelete: "CASCADE" });
+AlbumLike.belongsTo(Album, { foreignKey: "albumId" });
+
+// PlaqueTier is standalone — referenced by slug only, no FK
 module.exports = {
   sequelize,
   User, Profile, Artist, CorporateProfile,
   OtpToken, RefreshToken,
   Genre, Album, AlbumLaunch, AlbumGenre, Track, AlbumView, TrackLike, ArtistFollow, FanActivity,
   Payment, Plaque, CorporateSupport,
-  News,
+  News, PlaqueTier, AlbumLike
 };

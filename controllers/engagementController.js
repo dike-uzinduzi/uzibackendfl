@@ -115,7 +115,51 @@ const getFanFeed = async (req, res) => {
     });
   }
 };
+const markActivityRead = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const userId = req.user.id;
 
+    const activity = await FanActivity.findOne({ where: { id, userId } });
+    if (!activity) {
+      return res.status(404).json({ success: false, message: "Activity not found" });
+    }
+
+    if (!activity.read) {
+      await activity.update({ read: true });
+    }
+
+    res.json({ success: true, data: activity });
+  } catch (err) {
+    console.error("markActivityRead error:", err);
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+const markAllActivitiesRead = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const [updated] = await FanActivity.update(
+      { read: true },
+      { where: { userId, read: false } }
+    );
+    res.json({ success: true, updated });
+  } catch (err) {
+    console.error("markAllActivitiesRead error:", err);
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+const getUnreadCount = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const count = await FanActivity.count({ where: { userId, read: false } });
+    res.json({ success: true, data: { count } });
+  } catch (err) {
+    console.error("getUnreadCount error:", err);
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
 // ─────────────────────────────────────────────────────────────────────────────
 // FAN STATS / SUMMARY
 // GET /api/engagement/stats
@@ -218,4 +262,7 @@ module.exports = {
   unfollowArtist,
   getFanFeed,
   getFanStats,
+  markActivityRead,
+  markAllActivitiesRead,
+  getUnreadCount,
 };

@@ -7,6 +7,9 @@ const {
   unfollowArtist,
   getFanFeed,
   getFanStats,
+  markActivityRead,
+  markAllActivitiesRead,
+  getUnreadCount,
 } = require("../controllers/engagementController");
 
 // All engagement routes require auth
@@ -19,5 +22,7 @@ router.delete("/artists/:artistId/follow", unfollowArtist);
 // ─── Fan dashboard ─────────────────────────────────────────
 router.get("/feed",  getFanFeed);
 router.get("/stats", getFanStats);
-
+router.get  ("/activities/unread-count", getUnreadCount);
+router.patch("/activities/read-all",     markAllActivitiesRead);
+router.patch("/activities/:id/read",     markActivityRead);
 module.exports = router;
