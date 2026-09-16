@@ -1,6 +1,6 @@
 const CDN_BASE =
   process.env.CDN_BASE ||
-  "https://pub-969b935d3cad4df4a4e9c86a6c18588c.r2.dev";
+  "https://app.uzinduziafrica.com";
 
 const DEFAULT_PROFILE_PIC =
   process.env.DEFAULT_PROFILE_PIC_URL ||
