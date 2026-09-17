@@ -59,6 +59,11 @@ isDemoAccount: {
       allowNull: false,
       defaultValue: false,
     },
+    isSuspended: {
+  type: DataTypes.BOOLEAN,
+  allowNull: false,
+  defaultValue: false,
+},
 
     oauthProvider:   { type: DataTypes.STRING(50), allowNull: true },
     oauthProviderId: { type: DataTypes.STRING, allowNull: true },

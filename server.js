@@ -8,7 +8,7 @@ const swaggerJsdoc = require("swagger-jsdoc");
 const swaggerUi = require("swagger-ui-express");
 const emailService = require("./services/emailService");
 const { globalErrorHandler } = require("./middleware/errorHandler");
-
+const adminRoutes = require("./routes/adminRoutes");
 const allowedOrigins = [
   "http://localhost:4200",
   "http://localhost:5000",
@@ -240,6 +240,7 @@ if (!isProduction) {
 app.use("/api/auth", authLimiter, require("./routes/authRoutes"));
 app.use("/api/users", require("./routes/media.routes"));
 app.use("/api/users", require("./routes/userRoutes"));
+app.use("/api/admin", adminRoutes);
 app.use("/api/artists", require("./routes/artistRoutes"));
 app.use("/api/albums/:albumId/launch", require("./routes/albumLaunchRoutes"));
 app.use("/api/albums", require("./routes/albumRoutes"));
