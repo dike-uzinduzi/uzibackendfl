@@ -7,23 +7,117 @@ const {
 
 const PASSWORD = "DemoPass123!";
 
+const CDN = process.env.MEDIA_CDN_BASE || "https://pub-969b935d3cad4df4a4e9c86a6c18588c.r2.dev";
+const PLACEHOLDER_AVATAR = `${CDN}/placeholders/avatar-default.png`;
+const PLACEHOLDER_COVER  = `${CDN}/placeholders/cover-default.png`;
+const PLACEHOLDER_ALBUM  = `${CDN}/placeholders/album-cover-default.png`;
+const PLACEHOLDER_TRACK  = `${CDN}/placeholders/track-art-default.png`;
+
 const FANS = [
-  { userName: "demofan1", email: "demofan1@uzinduziafrica.com", firstName: "Rudo",   lastName: "Chirwa",  phone: "+263771111111" },
-  { userName: "demofan2", email: "demofan2@uzinduziafrica.com", firstName: "Tanaka", lastName: "Ncube",   phone: "+263771111112" },
-  { userName: "demofan3", email: "demofan3@uzinduziafrica.com", firstName: "Nyasha", lastName: "Mutasa",  phone: "+263771111113" },
-  { userName: "demofan4", email: "demofan4@uzinduziafrica.com", firstName: "Farai",  lastName: "Zhou",    phone: "+263771111114" },
+  {
+    userName: "demofan1",
+    email: "demofan1@uzinduziafrica.com",
+    firstName: "Rudo",
+    lastName: "Chirwa",
+    phone: "+263771111111",
+    whatsapp: "+263771111111",
+    country: "Zimbabwe",
+    address: "12 Samora Machel Ave, Harare",
+    bio: "Afro-pop superfan. Collecting plaques since day one.",
+    dob: "1996-04-12",
+    gender: "female",
+  },
+  {
+    userName: "demofan2",
+    email: "demofan2@uzinduziafrica.com",
+    firstName: "Tanaka",
+    lastName: "Ncube",
+    phone: "+263771111112",
+    whatsapp: "+263771111112",
+    country: "Zimbabwe",
+    address: "45 Fife Street, Bulawayo",
+    bio: "Hip-hop head. Zimbabwean artists deserve the world.",
+    dob: "1994-09-30",
+    gender: "male",
+  },
+  {
+    userName: "demofan3",
+    email: "demofan3@uzinduziafrica.com",
+    firstName: "Nyasha",
+    lastName: "Mutasa",
+    phone: "+263771111113",
+    whatsapp: "+263771111113",
+    country: "Zimbabwe",
+    address: "8 Josiah Tongogara, Mutare",
+    bio: "Amapiano on repeat. Supporting local since 2019.",
+    dob: "1998-01-22",
+    gender: "female",
+  },
+  {
+    userName: "demofan4",
+    email: "demofan4@uzinduziafrica.com",
+    firstName: "Farai",
+    lastName: "Zhou",
+    phone: "+263771111114",
+    whatsapp: "+263771111114",
+    country: "Zimbabwe",
+    address: "3 Robert Mugabe Way, Gweru",
+    bio: "Producer in training. Here for the culture.",
+    dob: "1992-11-08",
+    gender: "male",
+  },
 ];
 
 const ARTISTS = [
-  { userName: "demoartist1", email: "demoartist1@uzinduziafrica.com", stageName: "Soko",   genre: "Afro Pop",  bio: "Rising Afro Pop voice from Harare." },
-  { userName: "demoartist2", email: "demoartist2@uzinduziafrica.com", stageName: "Mhofu",  genre: "Hip Hop",   bio: "Hip-hop storyteller from Bulawayo." },
-  { userName: "demoartist3", email: "demoartist3@uzinduziafrica.com", stageName: "Gwenzi", genre: "Afro Soul", bio: "Soulful melodies rooted in tradition." },
-  { userName: "demoartist4", email: "demoartist4@uzinduziafrica.com", stageName: "Nzou",   genre: "Amapiano",  bio: "Amapiano beats with a Zimbabwean twist." },
+  {
+    userName: "demoartist1",
+    email: "demoartist1@uzinduziafrica.com",
+    stageName: "Soko",
+    firstName: "Tendai",
+    lastName: "Moyo",
+    genre: "Afro Pop",
+    bio: "Rising Afro Pop voice from Harare. Blending marimba with modern synths.",
+    phone: "+263772222001",
+    country: "Zimbabwe",
+  },
+  {
+    userName: "demoartist2",
+    email: "demoartist2@uzinduziafrica.com",
+    stageName: "Mhofu",
+    firstName: "Blessing",
+    lastName: "Ndlovu",
+    genre: "Hip Hop",
+    bio: "Hip-hop storyteller from Bulawayo. Bars about the streets, the people, the future.",
+    phone: "+263772222002",
+    country: "Zimbabwe",
+  },
+  {
+    userName: "demoartist3",
+    email: "demoartist3@uzinduziafrica.com",
+    stageName: "Gwenzi",
+    firstName: "Rutendo",
+    lastName: "Chikafu",
+    genre: "Afro Soul",
+    bio: "Soulful melodies rooted in tradition. Voice like warm honey.",
+    phone: "+263772222003",
+    country: "Zimbabwe",
+  },
+  {
+    userName: "demoartist4",
+    email: "demoartist4@uzinduziafrica.com",
+    stageName: "Nzou",
+    firstName: "Kudakwashe",
+    lastName: "Sibanda",
+    genre: "Amapiano",
+    bio: "Amapiano beats with a Zimbabwean twist. Log drums and love.",
+    phone: "+263772222004",
+    country: "Zimbabwe",
+  },
 ];
 
 const DEMO_ALBUM_TITLE = "Demo Album — Uzinduzi Showcase";
+const RELEASE_OFFSET_MS = -2 * 24 * 60 * 60 * 1000; // 2 days ago
 
-// Nine full-attribute tracks
 const TRACKS = [
   {
     title: "Kutanga",
@@ -36,11 +130,13 @@ const TRACKS = [
     masteringEngineer: "T. Ncube",
     mixingEngineer: "K. Moyo",
     trackDescription: "An opening invocation blending traditional marimba with modern synths.",
-    durationMs: 3 * 60 * 1000 + 15 * 1000,   // 3:15
+    specialCredits: "Recorded at Uzinduzi Studios, Harare",
+    durationMs: 3 * 60 * 1000 + 15 * 1000,
+    likeCount: 42,
   },
   {
     title: "Moyo Wangu",
-    featuredArtists: "",
+    featuredArtists: null,
     writer: "Soko, Gwenzi",
     producer: "Mhofu",
     performedBy: "Soko",
@@ -49,7 +145,9 @@ const TRACKS = [
     masteringEngineer: "T. Ncube",
     mixingEngineer: "K. Moyo",
     trackDescription: "A love song about courage and giving your heart fully.",
-    durationMs: 3 * 60 * 1000 + 42 * 1000,   // 3:42
+    specialCredits: "Strings arranged by R. Chikafu",
+    durationMs: 3 * 60 * 1000 + 42 * 1000,
+    likeCount: 78,
   },
   {
     title: "Shamwari",
@@ -62,11 +160,13 @@ const TRACKS = [
     masteringEngineer: "T. Ncube",
     mixingEngineer: "K. Moyo",
     trackDescription: "An ode to friendship — the ones who show up.",
-    durationMs: 4 * 60 * 1000 + 5 * 1000,    // 4:05
+    specialCredits: "Recorded at Uzinduzi Studios, Harare",
+    durationMs: 4 * 60 * 1000 + 5 * 1000,
+    likeCount: 63,
   },
   {
     title: "Usiku",
-    featuredArtists: "",
+    featuredArtists: null,
     writer: "Soko",
     producer: "Gwenzi",
     performedBy: "Soko",
@@ -75,7 +175,9 @@ const TRACKS = [
     masteringEngineer: "T. Ncube",
     mixingEngineer: "K. Moyo",
     trackDescription: "Night-time reflections. Slow burn.",
-    durationMs: 3 * 60 * 1000 + 58 * 1000,   // 3:58
+    specialCredits: "Piano recorded at Shed Studios",
+    durationMs: 3 * 60 * 1000 + 58 * 1000,
+    likeCount: 55,
   },
   {
     title: "Nhasi",
@@ -83,12 +185,14 @@ const TRACKS = [
     writer: "Soko, Nzou",
     producer: "Nzou",
     performedBy: "Soko, Nzou",
-    backingVocals: "",
+    backingVocals: null,
     instrumentation: "Log drum, Bass, Horns",
     masteringEngineer: "T. Ncube",
     mixingEngineer: "K. Moyo",
     trackDescription: "Amapiano crossover. Today is the day.",
-    durationMs: 4 * 60 * 1000 + 22 * 1000,   // 4:22
+    specialCredits: "Additional production by K. Sibanda",
+    durationMs: 4 * 60 * 1000 + 22 * 1000,
+    likeCount: 121,
   },
   {
     title: "Rudo",
@@ -101,11 +205,13 @@ const TRACKS = [
     masteringEngineer: "T. Ncube",
     mixingEngineer: "K. Moyo",
     trackDescription: "A duet about love that endures.",
-    durationMs: 3 * 60 * 1000 + 33 * 1000,   // 3:33
+    specialCredits: "Cello by T. Mutasa",
+    durationMs: 3 * 60 * 1000 + 33 * 1000,
+    likeCount: 94,
   },
   {
     title: "Mwedzi",
-    featuredArtists: "",
+    featuredArtists: null,
     writer: "Soko",
     producer: "Mhofu",
     performedBy: "Soko",
@@ -114,7 +220,9 @@ const TRACKS = [
     masteringEngineer: "T. Ncube",
     mixingEngineer: "K. Moyo",
     trackDescription: "Moonlight, silence, and the pull of home.",
-    durationMs: 3 * 60 * 1000 + 12 * 1000,   // 3:12
+    specialCredits: "Kalimba performed by Soko",
+    durationMs: 3 * 60 * 1000 + 12 * 1000,
+    likeCount: 71,
   },
   {
     title: "Nzira",
@@ -127,11 +235,13 @@ const TRACKS = [
     masteringEngineer: "T. Ncube",
     mixingEngineer: "K. Moyo",
     trackDescription: "The road. Choices. Perseverance.",
-    durationMs: 4 * 60 * 1000 + 48 * 1000,   // 4:48
+    specialCredits: "Brass section arranged by K. Sibanda",
+    durationMs: 4 * 60 * 1000 + 48 * 1000,
+    likeCount: 156,
   },
   {
     title: "Svondo",
-    featuredArtists: "",
+    featuredArtists: null,
     writer: "Soko, Gwenzi",
     producer: "Gwenzi",
     performedBy: "Soko",
@@ -140,20 +250,29 @@ const TRACKS = [
     masteringEngineer: "T. Ncube",
     mixingEngineer: "K. Moyo",
     trackDescription: "A closing hymn. Gratitude. Sunday morning.",
-    durationMs: 5 * 60 * 1000 + 10 * 1000,   // 5:10
+    specialCredits: "Choir recorded at St Mary's Cathedral",
+    durationMs: 5 * 60 * 1000 + 10 * 1000,
+    likeCount: 203,
   },
 ];
 
 async function seed() {
   await sequelize.sync();
-  console.log("🌱 Seeding demo accounts...\n");
+  console.log("🌱 Seeding demo accounts with full data...\n");
 
   // ─── Admin (for launch createdBy) ─────────────────────────
-  const admin = await User.findOne({ where: { role: "admin" } });
+  const admin = await User.findOne({
+    where: {
+      role: ["admin", "super_admin"],
+    },
+  });
   if (!admin) {
-    console.warn("⚠️  No admin user found. Run `node scripts/seed.js` first.");
+    console.warn("⚠️  No admin or super_admin user found.");
+    console.warn("    Add SUPER_ADMIN_EMAIL and SUPER_ADMIN_DEFAULT_PASSWORD to .env");
+    console.warn("    and restart the backend, or run `node scripts/seed.js` first.");
     process.exit(1);
   }
+  console.log(`Using admin: ${admin.email} (${admin.role})`);
 
   // ─── Fans ─────────────────────────────────────────────────
   for (const f of FANS) {
@@ -181,9 +300,16 @@ async function seed() {
         lastName: f.lastName,
         contactEmail: f.email,
         phoneNumber: f.phone,
-        whatsappNumber: f.phone,
-        countryOfResidence: "ZW",
-        address: "Harare, Zimbabwe",
+        whatsappNumber: f.whatsapp,
+        countryOfResidence: f.country,
+        address: f.address,
+        bio: f.bio,
+        dateOfBirth: f.dob,
+        gender: f.gender,
+        profilePic: PLACEHOLDER_AVATAR,
+        coverPhoto: PLACEHOLDER_COVER,
+        hasCustomProfilePic: false,
+        hasCustomCoverPhoto: false,
       },
     });
 
@@ -218,10 +344,17 @@ async function seed() {
       where: { userId: user.id },
       defaults: {
         userId: user.id,
-        firstName: a.stageName,
-        lastName: "Demo",
+        firstName: a.firstName,
+        lastName: a.lastName,
         contactEmail: a.email,
-        countryOfResidence: "ZW",
+        phoneNumber: a.phone,
+        whatsappNumber: a.phone,
+        countryOfResidence: a.country,
+        bio: a.bio,
+        profilePic: PLACEHOLDER_AVATAR,
+        coverPhoto: PLACEHOLDER_COVER,
+        hasCustomProfilePic: false,
+        hasCustomCoverPhoto: false,
       },
     });
 
@@ -231,11 +364,15 @@ async function seed() {
         userId: user.id,
         name: a.stageName,
         stageName: a.stageName,
-        firstName: a.stageName,
-        lastName: "Demo",
+        firstName: a.firstName,
+        lastName: a.lastName,
         bio: a.bio,
         genreId: genre.id,
         canCreateAlbums: true,
+        profilePictureUrl: PLACEHOLDER_AVATAR,
+        coverPhoto: PLACEHOLDER_COVER,
+        hasCustomProfilePic: false,
+        hasCustomCoverPhoto: false,
       },
     });
     if (!artist.canCreateAlbums) {
@@ -248,7 +385,7 @@ async function seed() {
   }
 
   // ─── Demo album with every attribute ──────────────────────
-  const releaseDate = new Date(Date.now() - 2 * 24 * 60 * 60 * 1000); // 2 days ago
+  const releaseDate = new Date(Date.now() + RELEASE_OFFSET_MS);
 
   const [album] = await Album.findOrCreate({
     where: { title: DEMO_ALBUM_TITLE, artistId: createdArtists[0].id },
@@ -257,6 +394,8 @@ async function seed() {
       title: DEMO_ALBUM_TITLE,
       release_date: releaseDate,
       albumType: "album",
+      cover_art: PLACEHOLDER_ALBUM,
+      hasCustomCoverArt: false,
       description:
         "A nine-track showcase album built for demonstrating the Uzinduzi " +
         "support-and-plaque flow. Fully populated with credits, features, " +
@@ -265,19 +404,31 @@ async function seed() {
       publisher: "Uzinduzi Demo Publishing",
       credits:
         "All songs written and performed by Soko. Produced by Mhofu and Gwenzi. " +
-        "Recorded at Uzinduzi Studios, Harare. Mixed and mastered by T. Ncube and K. Moyo.",
+        "Recorded at Uzinduzi Studios, Harare. Mixed and mastered by T. Ncube and K. Moyo. " +
+        "Artwork by Uzinduzi Creative.",
       affiliation: "ZIMRA / ZIMCOPY",
       is_published: true,
       is_featured: true,
       isDemo: true,
+      is_deleted: false,
+      viewCount: 0,
+      track_count: TRACKS.length,
+      duration: Math.round(
+        TRACKS.reduce((sum, t) => sum + t.durationMs, 0) / 1000,
+      ),
     },
   });
 
-  // Update album fields on re-run (findOrCreate only sets defaults once)
+  // Backfill fields on re-run
   album.description = album.description || "A nine-track showcase album...";
   album.copyright_info = album.copyright_info || `© ${new Date().getFullYear()} Uzinduzi Demo Recordings`;
   album.publisher = album.publisher || "Uzinduzi Demo Publishing";
+  album.affiliation = album.affiliation || "ZIMRA / ZIMCOPY";
+  album.credits = album.credits || "Recorded at Uzinduzi Studios, Harare.";
+  album.cover_art = album.cover_art || PLACEHOLDER_ALBUM;
   album.isDemo = true;
+  album.is_featured = true;
+  album.is_published = true;
   await album.save();
 
   // ─── Genres (many-to-many) ────────────────────────────────
@@ -285,7 +436,7 @@ async function seed() {
   for (const gName of albumGenres) {
     const [g] = await Genre.findOrCreate({
       where: { name: gName },
-      defaults: { name: gName },
+      defaults: { name: gName, description: `${gName} — demo genre` },
     });
     await AlbumGenre.findOrCreate({
       where: { albumId: album.id, genreId: g.id },
@@ -297,25 +448,27 @@ async function seed() {
   let createdTracks = 0;
   for (let i = 0; i < TRACKS.length; i++) {
     const t = TRACKS[i];
-    const [, wasCreated] = await Track.findOrCreate({
+    const [_, wasCreated] = await Track.findOrCreate({
       where: { albumId: album.id, trackNumber: i + 1 },
       defaults: {
         albumId: album.id,
         title: t.title,
         durationMs: t.durationMs,
         trackNumber: i + 1,
-        featuredArtists: t.featuredArtists || null,
-        trackArt: null,
+        featuredArtists: t.featuredArtists,
+        trackArt: PLACEHOLDER_TRACK,
+        hasCustomTrackArt: false,
         trackDescription: t.trackDescription,
         writer: t.writer,
         performedBy: t.performedBy,
-        specialCredits: "Recorded at Uzinduzi Studios, Harare",
-        backingVocals: t.backingVocals || null,
+        specialCredits: t.specialCredits,
+        backingVocals: t.backingVocals,
         instrumentation: t.instrumentation,
         releaseDate,
         producer: t.producer,
         masteringEngineer: t.masteringEngineer,
         mixingEngineer: t.mixingEngineer,
+        likeCount: t.likeCount,
         isPublished: true,
         isDeleted: false,
       },
@@ -327,7 +480,7 @@ async function seed() {
   const tracks = await Track.findAll({ where: { albumId: album.id } });
   const totalMs = tracks.reduce((sum, t) => sum + (t.durationMs || 0), 0);
   album.track_count = tracks.length;
-  album.duration = Math.round(totalMs / 1000);   // seconds
+  album.duration = Math.round(totalMs / 1000);
   await album.save();
 
   // ─── Launch — active now, ends in 30 days ─────────────────
@@ -335,7 +488,7 @@ async function seed() {
   const endsAt   = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
   const physicalLaunchAt = new Date(Date.now() + 3 * 24 * 60 * 60 * 1000);
 
-  const [launch, launchCreated] = await AlbumLaunch.findOrCreate({
+  const [launch] = await AlbumLaunch.findOrCreate({
     where: { albumId: album.id },
     defaults: {
       albumId: album.id,
@@ -344,10 +497,6 @@ async function seed() {
       physicalLaunchAt,
       status: "active",
       createdBy: admin.id,
-      title: "Demo Showcase — Virtual Launch",
-      description:
-        "A month-long demo launch. Supports all tiers up to CRIMSON. " +
-        "Demo accounts bypass payment for showcase purposes.",
       tierThresholds: [
         { tier: "SILVER",   minAmount: 51   },
         { tier: "GOLD",     minAmount: 150  },
@@ -358,7 +507,7 @@ async function seed() {
     },
   });
 
-  // Make sure launch is active even on re-run
+  // Keep launch active on re-run
   if (launch.status !== "active" || new Date(launch.endsAt) < new Date()) {
     launch.startsAt = startsAt;
     launch.endsAt = endsAt;
@@ -383,7 +532,7 @@ async function seed() {
   ARTISTS.forEach(a => console.log(`     ${a.email}`));
   console.log("\n   Album ID:");
   console.log(`     ${album.id}`);
-  console.log("─────────────────────────────────────────");
+  console.log("─────────────────────────────────────────\n");
 }
 
 seed()

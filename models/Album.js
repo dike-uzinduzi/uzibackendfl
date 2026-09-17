@@ -37,7 +37,6 @@ const Album = sequelize.define(
       allowNull: false,
       defaultValue: false,
     },
-// models/Album.js — add
 isDemo: {
   type: DataTypes.BOOLEAN,
   allowNull: false,
