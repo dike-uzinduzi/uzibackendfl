@@ -63,7 +63,9 @@ class AuthService {
   async verifyEmail(email, otp) {
     await otpService.consumeOtp(email, "email_verification", otp);
 
-    const user = await User.findOne({ where: { email: String(email).toLowerCase().trim() } });
+    const user = await User.findOne({
+      where: { email: String(email).toLowerCase().trim() },
+    });
     if (!user) throw new Error("Invalid or expired OTP");
 
     user.isEmailVerified = true;
@@ -94,9 +96,14 @@ class AuthService {
 
     await emailService.sendWelcomeEmail(user.email, user.userName);
 
+    // Refetch with the Profile association so the client gets the full state
+    const fresh = await User.findByPk(user.id, {
+      attributes: { exclude: ["password"] },
+      include: [{ model: Profile, as: "Profile" }],
+    });
+
     const token = generateToken(user.id);
-    const userResponse = user.get({ plain: true });
-    delete userResponse.password;
+    const userResponse = fresh.get({ plain: true });
 
     return {
       user: userResponse,
@@ -161,8 +168,7 @@ class AuthService {
     const superAdmin = await User.findOne({ where: { role: "super_admin" } });
     if (!superAdmin) throw new Error("Super admin not found");
 
-    // The password in meta is hashed at creation time by the User hook,
-    // but we hash it now anyway so it never sits in plaintext anywhere.
+    // Hash now so the password never sits in plaintext anywhere
     const passwordHash = await bcrypt.hash(password, 12);
 
     const otp = await otpService.issueOtp(superAdmin.email, "admin_creation", {
@@ -200,7 +206,7 @@ class AuthService {
     const user = await User.create({
       userName: data.userName,
       email: data.email,
-      password: data.passwordHash,   // hook detects $2a$ prefix, skips re-hashing
+      password: data.passwordHash,
       role: "admin",
       isEmailVerified: true,
     });
@@ -217,12 +223,14 @@ class AuthService {
 
     return { user: userResponse, message: "Admin account created successfully" };
   }
+
   // =========================
   // LOGIN
   // =========================
   async login(email, password) {
     const user = await User.findOne({
       where: { email: String(email).toLowerCase().trim() },
+      include: [{ model: Profile, as: "Profile" }],
     });
 
     if (!user) throw new Error("Invalid email or password");
@@ -261,10 +269,12 @@ class AuthService {
   async getCurrentUser(userId) {
     const user = await User.findByPk(userId, {
       attributes: { exclude: ["password"] },
+      include: [{ model: Profile, as: "Profile" }],
     });
     if (!user) throw new Error("User not found");
     return user;
   }
+
   // ─── Social signup completion ───────────────────────────────
   async socialComplete(userId, { userName, role }) {
     if (!userId) throw new Error("Unauthorized");
@@ -302,83 +312,91 @@ class AuthService {
     }
 
     const token = generateToken(user.id);
-    const userResponse = user.get({ plain: true });
-    delete userResponse.password;
+
+    // Refetch with the Profile association for the response
+    const fresh = await User.findByPk(user.id, {
+      attributes: { exclude: ["password"] },
+      include: [{ model: Profile, as: "Profile" }],
+    });
 
     return {
-      user: userResponse,
+      user: fresh.get({ plain: true }),
       token,
       message: "Social signup completed successfully",
     };
   }
 
-  // ─── Social login (new) ─────────────────────────────────────
-async socialLogin(profile) {
-  console.log('[socialLogin] START', profile.email);
+  // ─── Social login ───────────────────────────────────────────
+  async socialLogin(profile) {
+    console.log('[socialLogin] START', profile.email);
 
-  const { provider, providerId, email } = profile;
-  const normalisedEmail = String(email).toLowerCase().trim();
+    const { provider, providerId, email } = profile;
+    const normalisedEmail = String(email).toLowerCase().trim();
 
-  // 1. Look up by provider+id first
-  console.log('[socialLogin] lookup by provider:', provider, providerId);
-  let user = await User.findOne({
-    where: { oauthProvider: provider, oauthProviderId: providerId },
-  });
-  console.log('[socialLogin] provider lookup done, found:', user ? user.id : 'none');
+    // 1. Look up by provider+id first
+    console.log('[socialLogin] lookup by provider:', provider, providerId);
+    let user = await User.findOne({
+      where: { oauthProvider: provider, oauthProviderId: providerId },
+      include: [{ model: Profile, as: "Profile" }],
+    });
+    console.log('[socialLogin] provider lookup done, found:', user ? user.id : 'none');
 
-  // 2. If not found, look up by email
-  if (!user) {
-    console.log('[socialLogin] lookup by email:', normalisedEmail);
-    user = await User.findOne({ where: { email: normalisedEmail } });
-    console.log('[socialLogin] email lookup done, found:', user ? user.id : 'none');
-  }
+    // 2. If not found, look up by email
+    if (!user) {
+      console.log('[socialLogin] lookup by email:', normalisedEmail);
+      user = await User.findOne({
+        where: { email: normalisedEmail },
+        include: [{ model: Profile, as: "Profile" }],
+      });
+      console.log('[socialLogin] email lookup done, found:', user ? user.id : 'none');
+    }
 
-  // ─── Existing user: sign in (and link provider if not linked) ───
-  if (user) {
-    console.log('[socialLogin] updating existing user');
-    user.oauthProvider = provider;
-    user.oauthProviderId = providerId;
-    user.isEmailVerified = true;
-    user.lastLoginAt = new Date();
+    // ─── Existing user: sign in (and link provider if not linked) ───
+    if (user) {
+      console.log('[socialLogin] updating existing user');
+      user.oauthProvider = provider;
+      user.oauthProviderId = providerId;
+      user.isEmailVerified = true;
+      user.lastLoginAt = new Date();
 
-    console.log('[socialLogin] saving user...');
-    await user.save();
-    console.log('[socialLogin] user saved');
+      console.log('[socialLogin] saving user...');
+      await user.save();
+      console.log('[socialLogin] user saved');
 
-    const token = generateToken(user.id);
-    console.log('[socialLogin] token generated, returning');
+      const token = generateToken(user.id);
+      console.log('[socialLogin] token generated, returning');
+
+      const userResponse = user.get({ plain: true });
+      delete userResponse.password;
+
+      return { needsCompletion: false, user: userResponse, token };
+    }
+
+    // ─── New user: create stub + return signup_pending ───
+    console.log('[socialLogin] creating NEW user');
+    const tempUserName = `_pending_${provider}_${Date.now()}`;
+
+    user = await User.create({
+      userName: tempUserName,
+      email: normalisedEmail,
+      password: null,
+      role: "fan",
+      isEmailVerified: true,
+      oauthProvider: provider,
+      oauthProviderId: providerId,
+      oauthNeedsCompletion: true,
+      lastLoginAt: new Date(),
+    });
+    console.log('[socialLogin] new user created:', user.id);
+
+    const { generateSignupPendingToken } = require("../utils/jwtUtils");
+    const token = generateSignupPendingToken(user.id, provider);
 
     const userResponse = user.get({ plain: true });
     delete userResponse.password;
 
-    return { needsCompletion: false, user: userResponse, token };
+    return { needsCompletion: true, user: userResponse, token };
   }
-
-  // ─── New user: create stub + return signup_pending ───
-  console.log('[socialLogin] creating NEW user');
-  const tempUserName = `_pending_${provider}_${Date.now()}`;
-
-  user = await User.create({
-    userName: tempUserName,
-    email: normalisedEmail,
-    password: null,
-    role: "fan",
-    isEmailVerified: true,
-    oauthProvider: provider,
-    oauthProviderId: providerId,
-    oauthNeedsCompletion: true,
-    lastLoginAt: new Date(),
-  });
-  console.log('[socialLogin] new user created:', user.id);
-
-  const { generateSignupPendingToken } = require("../utils/jwtUtils");
-  const token = generateSignupPendingToken(user.id, provider);
-
-  const userResponse = user.get({ plain: true });
-  delete userResponse.password;
-
-  return { needsCompletion: true, user: userResponse, token };
-}
 }
 
 module.exports = new AuthService();

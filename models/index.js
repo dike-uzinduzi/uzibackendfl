@@ -28,7 +28,7 @@ const News = require("./News");
 // ─── Identity & Auth ────────────────────────────────────────
 User.hasOne(Profile, {
   foreignKey: "userId",
-  as: "profile",              // ← ADDED alias
+  as: "Profile",
   onDelete: "CASCADE",
 });
 Profile.belongsTo(User, { foreignKey: "userId" });

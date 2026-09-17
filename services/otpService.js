@@ -45,6 +45,12 @@ async function issueOtp(email, purpose, meta = null) {
   const code = generateCode();
   const codeHash = await OtpToken.hashCode(code);
 
+  // ─── DEV ONLY: print the OTP to the terminal so you don't need email ───
+  if (process.env.NODE_ENV !== "production") {
+    console.log(`[DEV OTP] ${normalised} (${purpose}): ${code}`);
+  }
+  // ──────────────────────────────────────────────────────────────────────
+
   await OtpToken.create({
     email: normalised,
     purpose,

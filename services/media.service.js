@@ -15,6 +15,22 @@ const News = require("../models/News");
 
 const PRESIGN_TTL_SECONDS = 300;
 
+// ─── helpers ─────────────────────────────────────────────────
+function toPublicUrl(key) {
+  if (!key) return null;
+  if (key.startsWith("http")) return key;          // already a URL
+  return `${process.env.MEDIA_CDN_BASE}/${key}`;
+}
+
+function toKey(urlOrKey) {
+  if (!urlOrKey) return null;
+  const base = process.env.MEDIA_CDN_BASE || "";
+  if (base && urlOrKey.startsWith(base)) {
+    return urlOrKey.slice(base.length + 1);
+  }
+  return urlOrKey;                                  // already a key
+}
+
 // ─── Presign ──────────────────────────────────────────────────
 exports.presign = async ({ userId, slot, contentType, contentLength }) => {
   const rule = SLOTS[slot];
@@ -43,7 +59,7 @@ exports.presign = async ({ userId, slot, contentType, contentLength }) => {
   return {
     uploadUrl,
     key,
-    publicUrl: `${process.env.MEDIA_CDN_BASE}/${key}`,
+    publicUrl: toPublicUrl(key),
     expiresIn: PRESIGN_TTL_SECONDS,
   };
 };
@@ -69,11 +85,11 @@ exports.confirm = async ({ userId, slot, key, context }) => {
     throw new AppError(400, "Upload not found. Did you PUT the file?");
   }
 
-  // 3. Fetch head bytes and verify with sharp (S3 metadata is client-controlled)
-  const url = `${process.env.MEDIA_CDN_BASE}/${key}`;
-  const head = await axios.get(url, {
+  // 3. Fetch head bytes and verify with sharp
+  const publicUrl = toPublicUrl(key);
+  const head = await axios.get(publicUrl, {
     responseType: "arraybuffer",
-    headers: { Range: "bytes=0-131071" },  // 128 KB header slice for dimensions
+    headers: { Range: "bytes=0-131071" },
     maxContentLength: 512 * 1024,
     timeout: 10_000,
   });
@@ -82,7 +98,7 @@ exports.confirm = async ({ userId, slot, key, context }) => {
   try {
     meta = await sharp(Buffer.from(head.data)).metadata();
   } catch {
-    await safeDelete(key);   // burn the bad file immediately
+    await safeDelete(key);
     throw new AppError(400, "Not a valid image");
   }
 
@@ -111,15 +127,15 @@ exports.confirm = async ({ userId, slot, key, context }) => {
     throw new AppError(400, "Unsupported image format");
   }
 
-  // 4. Write to DB — role-aware for avatar/cover, direct for the rest
-  const oldKey = await commit(userId, slot, key, context);
+  // 4. Write to DB — stores the full public URL
+  const oldUrl = await commit(userId, slot, key, context);
 
-  // 5. Delete the previous asset (fire and forget)
-  if (oldKey && oldKey !== key) {
-    safeDelete(oldKey);
+  // 5. Delete the previous asset if it was ours and different
+  if (oldUrl && toKey(oldUrl) !== key) {
+    safeDelete(oldUrl);
   }
 
-  return { key, url };
+  return { key, url: publicUrl };
 };
 
 // ─── Reset to default ─────────────────────────────────────────
@@ -128,12 +144,12 @@ exports.reset = async ({ userId, slot, context }) => {
   const map = FIELD_MAP[slot][model.constructor.name];
   if (!map) throw new AppError(400, "Cannot reset this slot");
 
-  const oldKey = model[map.key];
+  const oldUrl = model[map.key];
   model[map.key] = null;
   if (map.flag) model[map.flag] = false;
   await model.save();
 
-  if (oldKey) safeDelete(oldKey);
+  if (oldUrl) safeDelete(oldUrl);
   return { reset: true };
 };
 
@@ -175,7 +191,6 @@ async function commit(userId, slot, key, context) {
   const map = FIELD_MAP[slot][model.constructor.name];
   if (!map) throw new AppError(400, `Slot ${slot} not valid for this record`);
 
-  // Ownership check for non-user-owned records
   if (slot === "album" && model.artistId !== context.artistId) {
     throw new AppError(403, "Not your album");
   }
@@ -183,16 +198,20 @@ async function commit(userId, slot, key, context) {
     throw new AppError(403, "Not your plaque");
   }
 
-  const oldKey = model[map.key];
-  model[map.key] = key;
+  const oldUrl = model[map.key];
+
+  // Store the full public URL, not the raw key
+  model[map.key] = toPublicUrl(key);
   if (map.flag) model[map.flag] = true;
   await model.save();
 
-  return oldKey;
+  return oldUrl;
 }
 
-async function safeDelete(key) {
-  if (!key) return;
+async function safeDelete(urlOrKey) {
+  if (!urlOrKey) return;
+  const key = toKey(urlOrKey);
+  if (!key || key.startsWith("http")) return;  // nothing we can delete
   try {
     await r2.send(new DeleteObjectCommand({
       Bucket: process.env.R2_BUCKET,
@@ -203,7 +222,6 @@ async function safeDelete(key) {
   }
 }
 
-// Small helper the codebase will want
 class AppError extends Error {
   constructor(status, message) {
     super(message);

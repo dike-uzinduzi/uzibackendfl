@@ -42,7 +42,11 @@ const Profile = sequelize.define(
         },
       },
     },
-
+// Profile.js, in the columns block
+bio: {
+  type: DataTypes.STRING(300),
+  allowNull: true,
+},
     whatsappNumber: {
       type: DataTypes.STRING(17),
       allowNull: true,
