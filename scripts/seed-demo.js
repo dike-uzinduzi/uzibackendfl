@@ -10,7 +10,7 @@ const PASSWORD = "DemoPass123!";
 const CDN = process.env.MEDIA_CDN_BASE || "https://pub-969b935d3cad4df4a4e9c86a6c18588c.r2.dev";
 const PLACEHOLDER_AVATAR = `${CDN}/placeholders/avatar-default.png`;
 const PLACEHOLDER_COVER  = `${CDN}/placeholders/cover-default.png`;
-const PLACEHOLDER_ALBUM  = `${CDN}/placeholders/album-cover-default.png`;
+const PLACEHOLDER_ALBUM  = "https://app.uzinduziafrica.com/placeholders/album-cover-default.png";
 const PLACEHOLDER_TRACK  = `${CDN}/placeholders/track-art-default.png`;
 
 const FANS = [
@@ -115,144 +115,156 @@ const ARTISTS = [
   },
 ];
 
-const DEMO_ALBUM_TITLE = "Demo Album — Uzinduzi Showcase";
 const RELEASE_OFFSET_MS = -2 * 24 * 60 * 60 * 1000; // 2 days ago
 
-const TRACKS = [
+// ─────────────────────────────────────────────────────────────
+// Albums with full track lists
+// ─────────────────────────────────────────────────────────────
+const DEMO_ALBUMS = [
   {
-    title: "Kutanga",
-    featuredArtists: "Soko, Gwenzi",
-    writer: "Soko",
-    producer: "Mhofu",
-    performedBy: "Soko",
-    backingVocals: "Gwenzi",
-    instrumentation: "Marimba, Bass, Drums",
-    masteringEngineer: "T. Ncube",
-    mixingEngineer: "K. Moyo",
-    trackDescription: "An opening invocation blending traditional marimba with modern synths.",
-    specialCredits: "Recorded at Uzinduzi Studios, Harare",
-    durationMs: 3 * 60 * 1000 + 15 * 1000,
-    likeCount: 42,
+    title: "Demo Album — Uzinduzi Showcase",
+    artistIndex: 0,
+    albumType: "album",
+    isFeatured: true,
+    releaseOffsetDays: -2,
+    description:
+      "A nine-track showcase album built for demonstrating the Uzinduzi " +
+      "support-and-plaque flow. Fully populated with credits, features, " +
+      "and production metadata.",
+    publisher: "Uzinduzi Demo Publishing",
+    affiliation: "ZIMRA / ZIMCOPY",
+    credits:
+      "All songs written and performed by Soko. Produced by Mhofu and Gwenzi. " +
+      "Recorded at Uzinduzi Studios, Harare. Mixed and mastered by T. Ncube and K. Moyo. " +
+      "Artwork by Uzinduzi Creative.",
+    genres: ["Afro Pop", "Afro Soul", "Amapiano"],
+    tracks: [
+      { title: "Kutanga", featuredArtists: "Soko, Gwenzi", writer: "Soko", producer: "Mhofu", performedBy: "Soko", backingVocals: "Gwenzi", instrumentation: "Marimba, Bass, Drums", masteringEngineer: "T. Ncube", mixingEngineer: "K. Moyo", trackDescription: "An opening invocation blending traditional marimba with modern synths.", specialCredits: "Recorded at Uzinduzi Studios, Harare", durationMs: 3 * 60 * 1000 + 15 * 1000, likeCount: 42 },
+      { title: "Moyo Wangu", featuredArtists: null, writer: "Soko, Gwenzi", producer: "Mhofu", performedBy: "Soko", backingVocals: "Gwenzi, Nzou", instrumentation: "Guitar, Bass, Piano", masteringEngineer: "T. Ncube", mixingEngineer: "K. Moyo", trackDescription: "A love song about courage and giving your heart fully.", specialCredits: "Strings arranged by R. Chikafu", durationMs: 3 * 60 * 1000 + 42 * 1000, likeCount: 78 },
+      { title: "Shamwari", featuredArtists: "Mhofu", writer: "Soko, Mhofu", producer: "Mhofu", performedBy: "Soko, Mhofu", backingVocals: "Gwenzi", instrumentation: "Bass, Drums, Synth", masteringEngineer: "T. Ncube", mixingEngineer: "K. Moyo", trackDescription: "An ode to friendship — the ones who show up.", specialCredits: "Recorded at Uzinduzi Studios, Harare", durationMs: 4 * 60 * 1000 + 5 * 1000, likeCount: 63 },
+      { title: "Usiku", featuredArtists: null, writer: "Soko", producer: "Gwenzi", performedBy: "Soko", backingVocals: "Gwenzi", instrumentation: "Piano, Strings", masteringEngineer: "T. Ncube", mixingEngineer: "K. Moyo", trackDescription: "Night-time reflections. Slow burn.", specialCredits: "Piano recorded at Shed Studios", durationMs: 3 * 60 * 1000 + 58 * 1000, likeCount: 55 },
+      { title: "Nhasi", featuredArtists: "Nzou", writer: "Soko, Nzou", producer: "Nzou", performedBy: "Soko, Nzou", backingVocals: null, instrumentation: "Log drum, Bass, Horns", masteringEngineer: "T. Ncube", mixingEngineer: "K. Moyo", trackDescription: "Amapiano crossover. Today is the day.", specialCredits: "Additional production by K. Sibanda", durationMs: 4 * 60 * 1000 + 22 * 1000, likeCount: 121 },
+      { title: "Rudo", featuredArtists: "Gwenzi", writer: "Soko, Gwenzi", producer: "Gwenzi", performedBy: "Soko, Gwenzi", backingVocals: "Gwenzi", instrumentation: "Acoustic Guitar, Cello", masteringEngineer: "T. Ncube", mixingEngineer: "K. Moyo", trackDescription: "A duet about love that endures.", specialCredits: "Cello by T. Mutasa", durationMs: 3 * 60 * 1000 + 33 * 1000, likeCount: 94 },
+      { title: "Mwedzi", featuredArtists: null, writer: "Soko", producer: "Mhofu", performedBy: "Soko", backingVocals: "Gwenzi", instrumentation: "Kalimba, Bass, Percussion", masteringEngineer: "T. Ncube", mixingEngineer: "K. Moyo", trackDescription: "Moonlight, silence, and the pull of home.", specialCredits: "Kalimba performed by Soko", durationMs: 3 * 60 * 1000 + 12 * 1000, likeCount: 71 },
+      { title: "Nzira", featuredArtists: "Mhofu, Nzou", writer: "Soko, Mhofu, Nzou", producer: "Mhofu", performedBy: "Soko, Mhofu, Nzou", backingVocals: "Gwenzi", instrumentation: "Bass, Drums, Synth, Horns", masteringEngineer: "T. Ncube", mixingEngineer: "K. Moyo", trackDescription: "The road. Choices. Perseverance.", specialCredits: "Brass section arranged by K. Sibanda", durationMs: 4 * 60 * 1000 + 48 * 1000, likeCount: 156 },
+      { title: "Svondo", featuredArtists: null, writer: "Soko, Gwenzi", producer: "Gwenzi", performedBy: "Soko", backingVocals: "Gwenzi, Nzou, Mhofu", instrumentation: "Choir, Piano, Strings", masteringEngineer: "T. Ncube", mixingEngineer: "K. Moyo", trackDescription: "A closing hymn. Gratitude. Sunday morning.", specialCredits: "Choir recorded at St Mary's Cathedral", durationMs: 5 * 60 * 1000 + 10 * 1000, likeCount: 203 },
+    ],
   },
   {
-    title: "Moyo Wangu",
-    featuredArtists: null,
-    writer: "Soko, Gwenzi",
-    producer: "Mhofu",
-    performedBy: "Soko",
-    backingVocals: "Gwenzi, Nzou",
-    instrumentation: "Guitar, Bass, Piano",
-    masteringEngineer: "T. Ncube",
-    mixingEngineer: "K. Moyo",
-    trackDescription: "A love song about courage and giving your heart fully.",
-    specialCredits: "Strings arranged by R. Chikafu",
-    durationMs: 3 * 60 * 1000 + 42 * 1000,
-    likeCount: 78,
+    title: "Harare Nights",
+    artistIndex: 0,
+    albumType: "album",
+    isFeatured: false,
+    releaseOffsetDays: -9,
+    description:
+      "A nocturnal journey through Zimbabwe's capital. Afro-pop, amapiano, " +
+      "and late-night reflections from Soko and friends.",
+    publisher: "Uzinduzi Demo Publishing",
+    affiliation: "ZIMRA / ZIMCOPY",
+    credits: "Produced by Mhofu. Mixed by K. Moyo. Mastered by T. Ncube.",
+    genres: ["Afro Pop", "Amapiano"],
+    tracks: [
+      { title: "Chiedza", featuredArtists: null, writer: "Soko", producer: "Mhofu", performedBy: "Soko", backingVocals: null, instrumentation: "Synth, Bass, Drums", masteringEngineer: "T. Ncube", mixingEngineer: "K. Moyo", trackDescription: "Dusk falls over the city.", specialCredits: null, durationMs: 3 * 60 * 1000 + 48 * 1000, likeCount: 88 },
+      { title: "Mbare", featuredArtists: "Nzou", writer: "Soko, Nzou", producer: "Nzou", performedBy: "Soko, Nzou", backingVocals: "Gwenzi", instrumentation: "Log drum, Bass, Horns", masteringEngineer: "T. Ncube", mixingEngineer: "K. Moyo", trackDescription: "The market never sleeps.", specialCredits: null, durationMs: 4 * 60 * 1000 + 5 * 1000, likeCount: 112 },
+      { title: "CBD", featuredArtists: null, writer: "Soko", producer: "Mhofu", performedBy: "Soko", backingVocals: null, instrumentation: "Bass, Synth, Drums", masteringEngineer: "T. Ncube", mixingEngineer: "K. Moyo", trackDescription: "Central business district, after hours.", specialCredits: null, durationMs: 3 * 60 * 1000 + 22 * 1000, likeCount: 74 },
+      { title: "Borrowdale", featuredArtists: "Gwenzi", writer: "Soko, Gwenzi", producer: "Gwenzi", performedBy: "Soko, Gwenzi", backingVocals: "Gwenzi", instrumentation: "Piano, Strings, Bass", masteringEngineer: "T. Ncube", mixingEngineer: "K. Moyo", trackDescription: "Two worlds in one city.", specialCredits: null, durationMs: 4 * 60 * 1000 + 18 * 1000, likeCount: 96 },
+      { title: "Late Drive", featuredArtists: null, writer: "Soko", producer: "Mhofu", performedBy: "Soko", backingVocals: null, instrumentation: "Synth, Drums", masteringEngineer: "T. Ncube", mixingEngineer: "K. Moyo", trackDescription: "Windows down, headlights off.", specialCredits: null, durationMs: 3 * 60 * 1000 + 50 * 1000, likeCount: 58 },
+      { title: "Dawn", featuredArtists: "Gwenzi, Nzou", writer: "Soko, Gwenzi, Nzou", producer: "Gwenzi", performedBy: "Soko, Gwenzi, Nzou", backingVocals: "Gwenzi, Nzou", instrumentation: "Piano, Bass, Percussion", masteringEngineer: "T. Ncube", mixingEngineer: "K. Moyo", trackDescription: "Morning returns. Everything begins again.", specialCredits: "Choir by the Uzinduzi Ensemble", durationMs: 5 * 60 * 1000 + 19 * 1000, likeCount: 143 },
+    ],
   },
   {
-    title: "Shamwari",
-    featuredArtists: "Mhofu",
-    writer: "Soko, Mhofu",
-    producer: "Mhofu",
-    performedBy: "Soko, Mhofu",
-    backingVocals: "Gwenzi",
-    instrumentation: "Bass, Drums, Synth",
-    masteringEngineer: "T. Ncube",
-    mixingEngineer: "K. Moyo",
-    trackDescription: "An ode to friendship — the ones who show up.",
-    specialCredits: "Recorded at Uzinduzi Studios, Harare",
-    durationMs: 4 * 60 * 1000 + 5 * 1000,
-    likeCount: 63,
+    title: "Sunrise Sessions",
+    artistIndex: 1,
+    albumType: "ep",
+    isFeatured: false,
+    releaseOffsetDays: -16,
+    description:
+      "Four tracks recorded live at first light. Acoustic, intimate, unhurried.",
+    publisher: "Uzinduzi Demo Publishing",
+    affiliation: "ZIMRA / ZIMCOPY",
+    credits: "Recorded at Shed Studios, Harare. All tracks performed live, first take.",
+    genres: ["Afro Soul", "Afro Jazz"],
+    tracks: [
+      { title: "First Light", featuredArtists: null, writer: "Mhofu", producer: "Mhofu", performedBy: "Mhofu", backingVocals: null, instrumentation: "Acoustic Guitar", masteringEngineer: "T. Ncube", mixingEngineer: "K. Moyo", trackDescription: "A soft opening. One guitar, one voice.", specialCredits: "Recorded live in one take", durationMs: 3 * 60 * 1000 + 5 * 1000, likeCount: 62 },
+      { title: "Coffee", featuredArtists: "Gwenzi", writer: "Mhofu, Gwenzi", producer: "Mhofu", performedBy: "Mhofu, Gwenzi", backingVocals: "Gwenzi", instrumentation: "Acoustic Guitar, Piano", masteringEngineer: "T. Ncube", mixingEngineer: "K. Moyo", trackDescription: "Small rituals that hold a morning together.", specialCredits: null, durationMs: 3 * 60 * 1000 + 42 * 1000, likeCount: 71 },
+      { title: "Windows", featuredArtists: null, writer: "Mhofu", producer: "Mhofu", performedBy: "Mhofu", backingVocals: null, instrumentation: "Piano, Cello", masteringEngineer: "T. Ncube", mixingEngineer: "K. Moyo", trackDescription: "Looking out. Thinking in.", specialCredits: "Cello by T. Mutasa", durationMs: 4 * 60 * 1000 + 2 * 1000, likeCount: 55 },
+      { title: "Again", featuredArtists: null, writer: "Mhofu, Gwenzi", producer: "Mhofu", performedBy: "Mhofu", backingVocals: "Gwenzi", instrumentation: "Acoustic Guitar, Strings", masteringEngineer: "T. Ncube", mixingEngineer: "K. Moyo", trackDescription: "The day begins, as it always has.", specialCredits: null, durationMs: 3 * 60 * 1000 + 26 * 1000, likeCount: 68 },
+    ],
   },
   {
-    title: "Usiku",
-    featuredArtists: null,
-    writer: "Soko",
-    producer: "Gwenzi",
-    performedBy: "Soko",
-    backingVocals: "Gwenzi",
-    instrumentation: "Piano, Strings",
-    masteringEngineer: "T. Ncube",
-    mixingEngineer: "K. Moyo",
-    trackDescription: "Night-time reflections. Slow burn.",
-    specialCredits: "Piano recorded at Shed Studios",
-    durationMs: 3 * 60 * 1000 + 58 * 1000,
-    likeCount: 55,
+    title: "Bulawayo Blues",
+    artistIndex: 2,
+    albumType: "album",
+    isFeatured: false,
+    releaseOffsetDays: -23,
+    description:
+      "Hip-hop from the city of kings. Stories, defeats, comebacks, and the " +
+      "rhythm of the streets.",
+    publisher: "Uzinduzi Demo Publishing",
+    affiliation: "ZIMRA / ZIMCOPY",
+    credits: "Written and performed by Mhofu. Beats by Nzou. Mixed by K. Moyo.",
+    genres: ["Hip Hop", "Afro Pop"],
+    tracks: [
+      { title: "Intro (KoNtuthu)", featuredArtists: null, writer: "Mhofu", producer: "Nzou", performedBy: "Mhofu", backingVocals: null, instrumentation: "Bass, Drums", masteringEngineer: "T. Ncube", mixingEngineer: "K. Moyo", trackDescription: "Setting the scene.", specialCredits: null, durationMs: 1 * 60 * 1000 + 45 * 1000, likeCount: 34 },
+      { title: "City of Kings", featuredArtists: null, writer: "Mhofu", producer: "Nzou", performedBy: "Mhofu", backingVocals: null, instrumentation: "Bass, Drums, Synth", masteringEngineer: "T. Ncube", mixingEngineer: "K. Moyo", trackDescription: "An anthem for the second city.", specialCredits: null, durationMs: 3 * 60 * 1000 + 28 * 1000, likeCount: 156 },
+      { title: "Concrete", featuredArtists: "Soko", writer: "Mhofu, Soko", producer: "Nzou", performedBy: "Mhofu, Soko", backingVocals: "Soko", instrumentation: "Bass, Drums, Horns", masteringEngineer: "T. Ncube", mixingEngineer: "K. Moyo", trackDescription: "Streets made of stone, hearts made of steel.", specialCredits: null, durationMs: 4 * 60 * 1000 + 12 * 1000, likeCount: 142 },
+      { title: "Blues", featuredArtists: "Gwenzi", writer: "Mhofu, Gwenzi", producer: "Nzou", performedBy: "Mhofu, Gwenzi", backingVocals: "Gwenzi", instrumentation: "Piano, Bass, Drums", masteringEngineer: "T. Ncube", mixingEngineer: "K. Moyo", trackDescription: "When the music slows down.", specialCredits: null, durationMs: 4 * 60 * 1000 + 40 * 1000, likeCount: 187 },
+      { title: "Hustle", featuredArtists: null, writer: "Mhofu", producer: "Nzou", performedBy: "Mhofu", backingVocals: null, instrumentation: "Bass, Drums, Synth", masteringEngineer: "T. Ncube", mixingEngineer: "K. Moyo", trackDescription: "Every day, a small war.", specialCredits: null, durationMs: 3 * 60 * 1000 + 55 * 1000, likeCount: 121 },
+      { title: "Old Friends", featuredArtists: "Soko, Gwenzi", writer: "Mhofu, Soko, Gwenzi", producer: "Nzou", performedBy: "Mhofu, Soko, Gwenzi", backingVocals: "Soko, Gwenzi", instrumentation: "Acoustic Guitar, Bass, Drums", masteringEngineer: "T. Ncube", mixingEngineer: "K. Moyo", trackDescription: "The ones who stayed.", specialCredits: null, durationMs: 4 * 60 * 1000 + 18 * 1000, likeCount: 163 },
+      { title: "Night Bus", featuredArtists: null, writer: "Mhofu", producer: "Nzou", performedBy: "Mhofu", backingVocals: null, instrumentation: "Synth, Bass, Drums", masteringEngineer: "T. Ncube", mixingEngineer: "K. Moyo", trackDescription: "Sleeping between two cities.", specialCredits: null, durationMs: 3 * 60 * 1000 + 42 * 1000, likeCount: 98 },
+      { title: "Homecoming", featuredArtists: "Soko", writer: "Mhofu, Soko", producer: "Nzou", performedBy: "Mhofu, Soko", backingVocals: "Soko", instrumentation: "Bass, Drums, Piano", masteringEngineer: "T. Ncube", mixingEngineer: "K. Moyo", trackDescription: "You always come back.", specialCredits: null, durationMs: 5 * 60 * 1000 + 30 * 1000, likeCount: 210 },
+    ],
   },
   {
-    title: "Nhasi",
-    featuredArtists: "Nzou",
-    writer: "Soko, Nzou",
-    producer: "Nzou",
-    performedBy: "Soko, Nzou",
-    backingVocals: null,
-    instrumentation: "Log drum, Bass, Horns",
-    masteringEngineer: "T. Ncube",
-    mixingEngineer: "K. Moyo",
-    trackDescription: "Amapiano crossover. Today is the day.",
-    specialCredits: "Additional production by K. Sibanda",
-    durationMs: 4 * 60 * 1000 + 22 * 1000,
-    likeCount: 121,
+    title: "Soul Food",
+    artistIndex: 3,
+    albumType: "album",
+    isFeatured: false,
+    releaseOffsetDays: -30,
+    description:
+      "Gwenzi's warm, honeyed voice over soulful arrangements. Music that " +
+      "feeds you on the days when nothing else will.",
+    publisher: "Uzinduzi Demo Publishing",
+    affiliation: "ZIMRA / ZIMCOPY",
+    credits: "All songs written and performed by Gwenzi. Produced by Gwenzi and Mhofu.",
+    genres: ["Afro Soul", "Afro Jazz"],
+    tracks: [
+      { title: "Salt", featuredArtists: null, writer: "Gwenzi", producer: "Gwenzi", performedBy: "Gwenzi", backingVocals: null, instrumentation: "Piano, Strings", masteringEngineer: "T. Ncube", mixingEngineer: "K. Moyo", trackDescription: "The smallest thing that makes food taste alive.", specialCredits: null, durationMs: 3 * 60 * 1000 + 42 * 1000, likeCount: 71 },
+      { title: "Bread", featuredArtists: null, writer: "Gwenzi, Mhofu", producer: "Mhofu", performedBy: "Gwenzi", backingVocals: "Mhofu", instrumentation: "Acoustic Guitar, Piano, Bass", masteringEngineer: "T. Ncube", mixingEngineer: "K. Moyo", trackDescription: "What we all need.", specialCredits: null, durationMs: 4 * 60 * 1000 + 5 * 1000, likeCount: 88 },
+      { title: "Honey", featuredArtists: "Soko", writer: "Gwenzi, Soko", producer: "Gwenzi", performedBy: "Gwenzi, Soko", backingVocals: "Soko", instrumentation: "Piano, Strings, Bass", masteringEngineer: "T. Ncube", mixingEngineer: "K. Moyo", trackDescription: "Sweetness earned slowly.", specialCredits: null, durationMs: 3 * 60 * 1000 + 55 * 1000, likeCount: 124 },
+      { title: "Milk", featuredArtists: null, writer: "Gwenzi", producer: "Gwenzi", performedBy: "Gwenzi", backingVocals: null, instrumentation: "Piano, Cello", masteringEngineer: "T. Ncube", mixingEngineer: "K. Moyo", trackDescription: "Comfort in a glass.", specialCredits: null, durationMs: 3 * 60 * 1000 + 33 * 1000, likeCount: 67 },
+      { title: "Water", featuredArtists: "Mhofu", writer: "Gwenzi, Mhofu", producer: "Mhofu", performedBy: "Gwenzi, Mhofu", backingVocals: "Mhofu", instrumentation: "Kalimba, Bass, Percussion", masteringEngineer: "T. Ncube", mixingEngineer: "K. Moyo", trackDescription: "Nothing lives without it.", specialCredits: null, durationMs: 4 * 60 * 1000 + 12 * 1000, likeCount: 105 },
+      { title: "Wine", featuredArtists: null, writer: "Gwenzi", producer: "Gwenzi", performedBy: "Gwenzi", backingVocals: null, instrumentation: "Piano, Strings, Bass", masteringEngineer: "T. Ncube", mixingEngineer: "K. Moyo", trackDescription: "For the long evenings.", specialCredits: null, durationMs: 4 * 60 * 1000 + 28 * 1000, likeCount: 92 },
+      { title: "Chili", featuredArtists: "Nzou", writer: "Gwenzi, Nzou", producer: "Nzou", performedBy: "Gwenzi, Nzou", backingVocals: "Nzou", instrumentation: "Piano, Bass, Horns", masteringEngineer: "T. Ncube", mixingEngineer: "K. Moyo", trackDescription: "A little heat.", specialCredits: null, durationMs: 3 * 60 * 1000 + 48 * 1000, likeCount: 78 },
+      { title: "Rice", featuredArtists: null, writer: "Gwenzi", producer: "Gwenzi", performedBy: "Gwenzi", backingVocals: null, instrumentation: "Piano, Strings, Cello", masteringEngineer: "T. Ncube", mixingEngineer: "K. Moyo", trackDescription: "Enough for everyone.", specialCredits: null, durationMs: 4 * 60 * 1000 + 5 * 1000, likeCount: 83 },
+      { title: "Pepper", featuredArtists: "Soko", writer: "Gwenzi, Soko", producer: "Gwenzi", performedBy: "Gwenzi, Soko", backingVocals: "Soko", instrumentation: "Piano, Strings, Bass, Drums", masteringEngineer: "T. Ncube", mixingEngineer: "K. Moyo", trackDescription: "Sharp, bright, impossible to ignore.", specialCredits: null, durationMs: 3 * 60 * 1000 + 35 * 1000, likeCount: 96 },
+      { title: "Grace", featuredArtists: null, writer: "Gwenzi", producer: "Gwenzi", performedBy: "Gwenzi", backingVocals: null, instrumentation: "Piano, Strings, Choir", masteringEngineer: "T. Ncube", mixingEngineer: "K. Moyo", trackDescription: "A closing blessing.", specialCredits: "Choir by the Uzinduzi Ensemble", durationMs: 5 * 60 * 1000 + 2 * 1000, likeCount: 187 },
+    ],
   },
   {
-    title: "Rudo",
-    featuredArtists: "Gwenzi",
-    writer: "Soko, Gwenzi",
-    producer: "Gwenzi",
-    performedBy: "Soko, Gwenzi",
-    backingVocals: "Gwenzi",
-    instrumentation: "Acoustic Guitar, Cello",
-    masteringEngineer: "T. Ncube",
-    mixingEngineer: "K. Moyo",
-    trackDescription: "A duet about love that endures.",
-    specialCredits: "Cello by T. Mutasa",
-    durationMs: 3 * 60 * 1000 + 33 * 1000,
-    likeCount: 94,
-  },
-  {
-    title: "Mwedzi",
-    featuredArtists: null,
-    writer: "Soko",
-    producer: "Mhofu",
-    performedBy: "Soko",
-    backingVocals: "Gwenzi",
-    instrumentation: "Kalimba, Bass, Percussion",
-    masteringEngineer: "T. Ncube",
-    mixingEngineer: "K. Moyo",
-    trackDescription: "Moonlight, silence, and the pull of home.",
-    specialCredits: "Kalimba performed by Soko",
-    durationMs: 3 * 60 * 1000 + 12 * 1000,
-    likeCount: 71,
-  },
-  {
-    title: "Nzira",
-    featuredArtists: "Mhofu, Nzou",
-    writer: "Soko, Mhofu, Nzou",
-    producer: "Mhofu",
-    performedBy: "Soko, Mhofu, Nzou",
-    backingVocals: "Gwenzi",
-    instrumentation: "Bass, Drums, Synth, Horns",
-    masteringEngineer: "T. Ncube",
-    mixingEngineer: "K. Moyo",
-    trackDescription: "The road. Choices. Perseverance.",
-    specialCredits: "Brass section arranged by K. Sibanda",
-    durationMs: 4 * 60 * 1000 + 48 * 1000,
-    likeCount: 156,
-  },
-  {
-    title: "Svondo",
-    featuredArtists: null,
-    writer: "Soko, Gwenzi",
-    producer: "Gwenzi",
-    performedBy: "Soko",
-    backingVocals: "Gwenzi, Nzou, Mhofu",
-    instrumentation: "Choir, Piano, Strings",
-    masteringEngineer: "T. Ncube",
-    mixingEngineer: "K. Moyo",
-    trackDescription: "A closing hymn. Gratitude. Sunday morning.",
-    specialCredits: "Choir recorded at St Mary's Cathedral",
-    durationMs: 5 * 60 * 1000 + 10 * 1000,
-    likeCount: 203,
+    title: "Amapiano Sunday",
+    artistIndex: 3,
+    albumType: "mixtape",
+    isFeatured: false,
+    releaseOffsetDays: -37,
+    description:
+      "Nine tracks of log drums, piano stabs, and patience. For the long " +
+      "afternoon. For the drive home.",
+    publisher: "Uzinduzi Demo Publishing",
+    affiliation: "ZIMRA / ZIMCOPY",
+    credits: "Produced by Nzou. Additional keys by K. Sibanda. Mixed by K. Moyo.",
+    genres: ["Amapiano", "Afro Pop"],
+    tracks: [
+      { title: "Sands", featuredArtists: null, writer: "Nzou", producer: "Nzou", performedBy: "Nzou", backingVocals: null, instrumentation: "Log drum, Piano, Bass", masteringEngineer: "T. Ncube", mixingEngineer: "K. Moyo", trackDescription: "An unhurried opening.", specialCredits: null, durationMs: 4 * 60 * 1000 + 12 * 1000, likeCount: 65 },
+      { title: "Slow Sunday", featuredArtists: null, writer: "Nzou", producer: "Nzou", performedBy: "Nzou", backingVocals: null, instrumentation: "Log drum, Piano, Synth", masteringEngineer: "T. Ncube", mixingEngineer: "K. Moyo", trackDescription: "Nothing to do. Everything to feel.", specialCredits: null, durationMs: 4 * 60 * 1000 + 45 * 1000, likeCount: 112 },
+      { title: "Kombi", featuredArtists: "Soko", writer: "Nzou, Soko", producer: "Nzou", performedBy: "Nzou, Soko", backingVocals: "Soko", instrumentation: "Log drum, Bass, Horns", masteringEngineer: "T. Ncube", mixingEngineer: "K. Moyo", trackDescription: "The sound of the ride home.", specialCredits: null, durationMs: 4 * 60 * 1000 + 32 * 1000, likeCount: 143 },
+      { title: "Braai", featuredArtists: null, writer: "Nzou", producer: "Nzou", performedBy: "Nzou", backingVocals: null, instrumentation: "Log drum, Bass, Synth, Horns", masteringEngineer: "T. Ncube", mixingEngineer: "K. Moyo", trackDescription: "Family, fire, and time.", specialCredits: null, durationMs: 4 * 60 * 1000 + 5 * 1000, likeCount: 98 },
+      { title: "Afternoon", featuredArtists: "Gwenzi", writer: "Nzou, Gwenzi", producer: "Nzou", performedBy: "Nzou, Gwenzi", backingVocals: "Gwenzi", instrumentation: "Log drum, Piano, Strings", masteringEngineer: "T. Ncube", mixingEngineer: "K. Moyo", trackDescription: "Mid-day light through thin curtains.", specialCredits: null, durationMs: 4 * 60 * 1000 + 48 * 1000, likeCount: 127 },
+      { title: "Rain", featuredArtists: null, writer: "Nzou", producer: "Nzou", performedBy: "Nzou", backingVocals: null, instrumentation: "Log drum, Piano, Synth", masteringEngineer: "T. Ncube", mixingEngineer: "K. Moyo", trackDescription: "When the sky opens.", specialCredits: null, durationMs: 4 * 60 * 1000 + 18 * 1000, likeCount: 76 },
+      { title: "Garden", featuredArtists: null, writer: "Nzou", producer: "Nzou", performedBy: "Nzou", backingVocals: null, instrumentation: "Log drum, Piano, Bass", masteringEngineer: "T. Ncube", mixingEngineer: "K. Moyo", trackDescription: "Things that grow slowly.", specialCredits: null, durationMs: 3 * 60 * 1000 + 55 * 1000, likeCount: 71 },
+      { title: "Evening", featuredArtists: "Soko, Gwenzi", writer: "Nzou, Soko, Gwenzi", producer: "Nzou", performedBy: "Nzou, Soko, Gwenzi", backingVocals: "Soko, Gwenzi", instrumentation: "Log drum, Piano, Bass, Horns", masteringEngineer: "T. Ncube", mixingEngineer: "K. Moyo", trackDescription: "The light turns gold.", specialCredits: null, durationMs: 5 * 60 * 1000 + 2 * 1000, likeCount: 165 },
+      { title: "Sleep", featuredArtists: null, writer: "Nzou", producer: "Nzou", performedBy: "Nzou", backingVocals: null, instrumentation: "Log drum, Piano, Strings", masteringEngineer: "T. Ncube", mixingEngineer: "K. Moyo", trackDescription: "A closing lullaby.", specialCredits: null, durationMs: 4 * 60 * 1000 + 25 * 1000, likeCount: 118 },
+    ],
   },
 ];
 
@@ -262,14 +274,11 @@ async function seed() {
 
   // ─── Admin (for launch createdBy) ─────────────────────────
   const admin = await User.findOne({
-    where: {
-      role: ["admin", "super_admin"],
-    },
+    where: { role: ["admin", "super_admin"] },
   });
   if (!admin) {
     console.warn("⚠️  No admin or super_admin user found.");
     console.warn("    Add SUPER_ADMIN_EMAIL and SUPER_ADMIN_DEFAULT_PASSWORD to .env");
-    console.warn("    and restart the backend, or run `node scripts/seed.js` first.");
     process.exit(1);
   }
   console.log(`Using admin: ${admin.email} (${admin.role})`);
@@ -384,144 +393,161 @@ async function seed() {
     console.log(`✅ Demo Artist  → ${a.email}  (stage: ${a.stageName}, genre: ${a.genre})`);
   }
 
-  // ─── Demo album with every attribute ──────────────────────
-  const releaseDate = new Date(Date.now() + RELEASE_OFFSET_MS);
+  // ─── Albums + tracks ──────────────────────────────────────
+  const createdAlbums = [];
 
-  const [album] = await Album.findOrCreate({
-    where: { title: DEMO_ALBUM_TITLE, artistId: createdArtists[0].id },
-    defaults: {
-      artistId: createdArtists[0].id,
-      title: DEMO_ALBUM_TITLE,
-      release_date: releaseDate,
-      albumType: "album",
-      cover_art: PLACEHOLDER_ALBUM,
-      hasCustomCoverArt: false,
-      description:
-        "A nine-track showcase album built for demonstrating the Uzinduzi " +
-        "support-and-plaque flow. Fully populated with credits, features, " +
-        "and production metadata.",
-      copyright_info: `© ${new Date().getFullYear()} Uzinduzi Demo Recordings`,
-      publisher: "Uzinduzi Demo Publishing",
-      credits:
-        "All songs written and performed by Soko. Produced by Mhofu and Gwenzi. " +
-        "Recorded at Uzinduzi Studios, Harare. Mixed and mastered by T. Ncube and K. Moyo. " +
-        "Artwork by Uzinduzi Creative.",
-      affiliation: "ZIMRA / ZIMCOPY",
-      is_published: true,
-      is_featured: true,
-      isDemo: true,
-      is_deleted: false,
-      viewCount: 0,
-      track_count: TRACKS.length,
-      duration: Math.round(
-        TRACKS.reduce((sum, t) => sum + t.durationMs, 0) / 1000,
-      ),
-    },
-  });
+  for (const albumData of DEMO_ALBUMS) {
+    const ownerArtist = createdArtists[albumData.artistIndex];
+    const releaseDate = new Date(Date.now() + albumData.releaseOffsetDays * 24 * 60 * 60 * 1000);
 
-  // Backfill fields on re-run
-  album.description = album.description || "A nine-track showcase album...";
-  album.copyright_info = album.copyright_info || `© ${new Date().getFullYear()} Uzinduzi Demo Recordings`;
-  album.publisher = album.publisher || "Uzinduzi Demo Publishing";
-  album.affiliation = album.affiliation || "ZIMRA / ZIMCOPY";
-  album.credits = album.credits || "Recorded at Uzinduzi Studios, Harare.";
-  album.cover_art = album.cover_art || PLACEHOLDER_ALBUM;
-  album.isDemo = true;
-  album.is_featured = true;
-  album.is_published = true;
-  await album.save();
+    const totalMs = albumData.tracks.reduce((s, t) => s + t.durationMs, 0);
 
-  // ─── Genres (many-to-many) ────────────────────────────────
-  const albumGenres = ["Afro Pop", "Afro Soul", "Amapiano"];
-  for (const gName of albumGenres) {
-    const [g] = await Genre.findOrCreate({
-      where: { name: gName },
-      defaults: { name: gName, description: `${gName} — demo genre` },
-    });
-    await AlbumGenre.findOrCreate({
-      where: { albumId: album.id, genreId: g.id },
-      defaults: { albumId: album.id, genreId: g.id },
-    });
-  }
-
-  // ─── Nine full-attribute tracks ───────────────────────────
-  let createdTracks = 0;
-  for (let i = 0; i < TRACKS.length; i++) {
-    const t = TRACKS[i];
-    const [_, wasCreated] = await Track.findOrCreate({
-      where: { albumId: album.id, trackNumber: i + 1 },
+    const [album] = await Album.findOrCreate({
+      where: { title: albumData.title, artistId: ownerArtist.id },
       defaults: {
-        albumId: album.id,
-        title: t.title,
-        durationMs: t.durationMs,
-        trackNumber: i + 1,
-        featuredArtists: t.featuredArtists,
-        trackArt: PLACEHOLDER_TRACK,
-        hasCustomTrackArt: false,
-        trackDescription: t.trackDescription,
-        writer: t.writer,
-        performedBy: t.performedBy,
-        specialCredits: t.specialCredits,
-        backingVocals: t.backingVocals,
-        instrumentation: t.instrumentation,
-        releaseDate,
-        producer: t.producer,
-        masteringEngineer: t.masteringEngineer,
-        mixingEngineer: t.mixingEngineer,
-        likeCount: t.likeCount,
-        isPublished: true,
-        isDeleted: false,
+        artistId: ownerArtist.id,
+        title: albumData.title,
+        release_date: releaseDate,
+        albumType: albumData.albumType,
+        cover_art: PLACEHOLDER_ALBUM,
+        hasCustomCoverArt: false,
+        description: albumData.description,
+        copyright_info: `© ${new Date().getFullYear()} Uzinduzi Demo Recordings`,
+        publisher: albumData.publisher,
+        credits: albumData.credits,
+        affiliation: albumData.affiliation,
+        is_published: true,
+        is_featured: albumData.isFeatured,
+        isDemo: true,
+        is_deleted: false,
+        viewCount: 0,
+        track_count: albumData.tracks.length,
+        duration: Math.round(totalMs / 1000),
       },
     });
-    if (wasCreated) createdTracks++;
+
+    // Backfill on re-run
+    album.cover_art = PLACEHOLDER_ALBUM;
+    album.description = album.description || albumData.description;
+    album.copyright_info = album.copyright_info || `© ${new Date().getFullYear()} Uzinduzi Demo Recordings`;
+    album.publisher = album.publisher || albumData.publisher;
+    album.credits = album.credits || albumData.credits;
+    album.affiliation = album.affiliation || albumData.affiliation;
+    album.isDemo = true;
+    album.is_published = true;
+    await album.save();
+
+    // Genres
+    for (const gName of albumData.genres) {
+      const [g] = await Genre.findOrCreate({
+        where: { name: gName },
+        defaults: { name: gName, description: `${gName} — demo genre` },
+      });
+      await AlbumGenre.findOrCreate({
+        where: { albumId: album.id, genreId: g.id },
+        defaults: { albumId: album.id, genreId: g.id },
+      });
+    }
+
+    // Tracks
+    let newTracks = 0;
+    for (let i = 0; i < albumData.tracks.length; i++) {
+      const t = albumData.tracks[i];
+      const [_, wasCreated] = await Track.findOrCreate({
+        where: { albumId: album.id, trackNumber: i + 1 },
+        defaults: {
+          albumId: album.id,
+          title: t.title,
+          durationMs: t.durationMs,
+          trackNumber: i + 1,
+          featuredArtists: t.featuredArtists,
+          trackArt: PLACEHOLDER_TRACK,
+          hasCustomTrackArt: false,
+          trackDescription: t.trackDescription,
+          writer: t.writer,
+          performedBy: t.performedBy,
+          specialCredits: t.specialCredits,
+          backingVocals: t.backingVocals,
+          instrumentation: t.instrumentation,
+          releaseDate,
+          producer: t.producer,
+          masteringEngineer: t.masteringEngineer,
+          mixingEngineer: t.mixingEngineer,
+          likeCount: t.likeCount,
+          isPublished: true,
+          isDeleted: false,
+        },
+      });
+      if (wasCreated) newTracks++;
+    }
+
+    // Recompute counters from actual rows
+    const tracks = await Track.findAll({ where: { albumId: album.id } });
+    const totalActualMs = tracks.reduce((s, t) => s + (t.durationMs || 0), 0);
+    album.track_count = tracks.length;
+    album.duration = Math.round(totalActualMs / 1000);
+    await album.save();
+
+    createdAlbums.push({ album, tracks, newTracks });
+    console.log(
+      `✅ Demo Album   → "${albumData.title}" (${albumData.albumType}, ${ownerArtist.stageName}) — ${tracks.length} tracks`,
+    );
   }
 
-  // Recompute album counters from actual tracks
-  const tracks = await Track.findAll({ where: { albumId: album.id } });
-  const totalMs = tracks.reduce((sum, t) => sum + (t.durationMs || 0), 0);
-  album.track_count = tracks.length;
-  album.duration = Math.round(totalMs / 1000);
-  await album.save();
+  // ─── Launch on the featured album ─────────────────────────
+  const featured = createdAlbums.find(c => c.album.is_featured);
+  let launch = null;
 
-  // ─── Launch — active now, ends in 30 days ─────────────────
-  const startsAt = new Date(Date.now() - 24 * 60 * 60 * 1000);
-  const endsAt   = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
-  const physicalLaunchAt = new Date(Date.now() + 3 * 24 * 60 * 60 * 1000);
+  if (featured) {
+    const startsAt = new Date(Date.now() - 24 * 60 * 60 * 1000);
+    const endsAt   = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+    const physicalLaunchAt = new Date(Date.now() + 3 * 24 * 60 * 60 * 1000);
 
-  const [launch] = await AlbumLaunch.findOrCreate({
-    where: { albumId: album.id },
-    defaults: {
-      albumId: album.id,
-      startsAt,
-      endsAt,
-      physicalLaunchAt,
-      status: "active",
-      createdBy: admin.id,
-      tierThresholds: [
-        { tier: "SILVER",   minAmount: 51   },
-        { tier: "GOLD",     minAmount: 150  },
-        { tier: "SAPPHIRE", minAmount: 300  },
-        { tier: "EMERALD",  minAmount: 600  },
-        { tier: "CRIMSON",  minAmount: 1000 },
-      ],
-    },
-  });
+    const [launchRow] = await AlbumLaunch.findOrCreate({
+      where: { albumId: featured.album.id },
+      defaults: {
+        albumId: featured.album.id,
+        startsAt,
+        endsAt,
+        physicalLaunchAt,
+        status: "active",
+        createdBy: admin.id,
+        tierThresholds: [
+          { tier: "SILVER",   minAmount: 51   },
+          { tier: "GOLD",     minAmount: 150  },
+          { tier: "SAPPHIRE", minAmount: 300  },
+          { tier: "EMERALD",  minAmount: 600  },
+          { tier: "CRIMSON",  minAmount: 1000 },
+        ],
+      },
+    });
 
-  // Keep launch active on re-run
-  if (launch.status !== "active" || new Date(launch.endsAt) < new Date()) {
-    launch.startsAt = startsAt;
-    launch.endsAt = endsAt;
-    launch.status = "active";
-    await launch.save();
+    if (launchRow.status !== "active" || new Date(launchRow.endsAt) < new Date()) {
+      launchRow.startsAt = startsAt;
+      launchRow.endsAt = endsAt;
+      launchRow.status = "active";
+      await launchRow.save();
+    }
+
+    launch = launchRow;
   }
 
   // ─── Summary ──────────────────────────────────────────────
-  console.log(`\n🎵 Demo album   → "${album.title}"`);
-  console.log(`   Album ID     → ${album.id}`);
-  console.log(`   Tracks       → ${tracks.length} (${createdTracks} newly created)`);
-  console.log(`   Duration     → ${Math.floor(album.duration / 60)}m ${album.duration % 60}s`);
-  console.log(`   Genres       → ${albumGenres.join(", ")}`);
-  console.log(`   Launch       → active until ${launch.endsAt.toISOString().slice(0, 10)}`);
+  const totalTracks = createdAlbums.reduce((s, c) => s + c.tracks.length, 0);
+
+  console.log(`\n🎵 Demo albums  → ${createdAlbums.length} total  (${totalTracks} tracks)\n`);
+  for (const { album, tracks } of createdAlbums) {
+    const mins = Math.floor(album.duration / 60);
+    const secs = album.duration % 60;
+    const star = album.is_featured ? '★ ' : '  ';
+    console.log(`${star}${album.title}`);
+    console.log(`   ID: ${album.id}`);
+    console.log(`   Tracks: ${tracks.length}  Duration: ${mins}m ${secs}s`);
+  }
+
+  if (launch) {
+    console.log(`\n   Launch       → active until ${launch.endsAt.toISOString().slice(0, 10)}`);
+  }
 
   console.log("\n─────────────────────────────────────────");
   console.log("Demo logins (same password for all):");
@@ -530,8 +556,6 @@ async function seed() {
   FANS.forEach(f => console.log(`     ${f.email}`));
   console.log("\n   Artists:");
   ARTISTS.forEach(a => console.log(`     ${a.email}`));
-  console.log("\n   Album ID:");
-  console.log(`     ${album.id}`);
   console.log("─────────────────────────────────────────\n");
 }
 
