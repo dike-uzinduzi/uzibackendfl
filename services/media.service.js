@@ -191,11 +191,17 @@ async function commit(userId, slot, key, context) {
   const map = FIELD_MAP[slot][model.constructor.name];
   if (!map) throw new AppError(400, `Slot ${slot} not valid for this record`);
 
-  if (slot === "album" && model.artistId !== context.artistId) {
-    throw new AppError(403, "Not your album");
-  }
-  if (slot === "plaque" && model.ownerId !== userId) {
-    throw new AppError(403, "Not your plaque");
+  // Admins bypass ownership checks — they manage any record.
+  const isAdmin =
+    context.role === "admin" || context.role === "super_admin";
+
+  if (!isAdmin) {
+    if (slot === "album" && model.artistId !== context.artistId) {
+      throw new AppError(403, "Not your album");
+    }
+    if (slot === "plaque" && model.ownerId !== userId) {
+      throw new AppError(403, "Not your plaque");
+    }
   }
 
   const oldUrl = model[map.key];
