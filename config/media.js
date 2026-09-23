@@ -17,14 +17,13 @@ const SLOTS = {
     types: ["image/jpeg", "image/png", "image/webp"],
   },
   album: {
-    prefix: "albums",
-    maxBytes: 8 * 1024 * 1024,
-    minDim: 1400,
-    maxDim: 4000,
-    aspect: [1, 1],
-    aspectTolerance: 0.02,
-    types: ["image/jpeg", "image/png", "image/webp"],
-  },
+  prefix: "albums",
+  maxBytes: 8 * 1024 * 1024,
+  minDim: 1000,
+  maxDim: 4000,
+  aspect: null,          // ← was [1, 1]
+  types: ["image/jpeg", "image/png", "image/webp"],
+},
   plaque: {
     prefix: "plaques",
     maxBytes: 8 * 1024 * 1024,
