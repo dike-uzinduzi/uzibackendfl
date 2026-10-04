@@ -23,4 +23,8 @@ router.patch("/albums/:id/publish",   adminController.publishAlbum);
 router.patch("/albums/:id/feature",   adminController.featureAlbum);
 router.patch("/albums/:id/soft-delete", adminController.softDeleteAlbum);
 
+
+// NEW ── safe delete
+router.get("/albums/:id/delete-preflight", adminController.albumDeletePreflight);
+router.delete("/albums/:id",               adminController.hardDeleteAlbum);
 module.exports = router;

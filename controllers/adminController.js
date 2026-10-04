@@ -1,7 +1,7 @@
 const { Op, fn, col } = require("sequelize");
 const {
   sequelize,
-  User, Artist, Album, AlbumLaunch, Payment, Plaque,
+  User, Artist, Album, AlbumLaunch, Track, Payment, Plaque,
 } = require("../models");
 
 // ─── Overview stats ─────────────────────────────────────────
@@ -16,7 +16,7 @@ exports.stats = async (req, res) => {
       totalUsers, totalArtists, newUsersThisWeek,
       totalAlbums, publishedAlbums,
       activeLaunches, scheduledLaunches,
-      totalPlaques, pendingPlaques,
+      totalPlaques, readyForDelivery,
       revenueTotal, revenueThisMonth, pendingPayouts,
     ] = await Promise.all([
       User.count(),
@@ -27,7 +27,7 @@ exports.stats = async (req, res) => {
       AlbumLaunch.count({ where: { status: "active" } }),
       AlbumLaunch.count({ where: { status: "scheduled" } }),
       Plaque.count(),
-      Plaque.count({ where: { status: "pending_shipment" } }).catch(() => 0),
+      Plaque.count({ where: { status: "READY_FOR_DELIVERY" } }).catch(() => 0),
       Payment.sum("amountCents", { where: { status: "completed" } }).catch(() => 0),
       Payment.sum("amountCents", {
         where: { status: "completed", createdAt: { [Op.gte]: monthStart } },
@@ -53,7 +53,7 @@ exports.stats = async (req, res) => {
         },
         plaques: {
           total: totalPlaques || 0,
-          pendingShipment: pendingPlaques || 0,
+          readyForDelivery: readyForDelivery || 0,
         },
         revenue: {
           totalCents: revenueTotal || 0,
@@ -357,6 +357,131 @@ exports.softDeleteAlbum = async (req, res) => {
     return res.status(500).json({
       success: false,
       message: err.message || "Could not update album",
+    });
+  }
+};
+
+// ─── Safe delete: preflight ────────────────────────────────
+exports.albumDeletePreflight = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const album = await Album.findByPk(id);
+    if (!album) {
+      return res.status(404).json({
+        success: false,
+        message: "Album not found",
+      });
+    }
+
+    const blockers = [];
+
+    if (!album.is_deleted) {
+      blockers.push({
+        type: "not_soft_deleted",
+        message: "Soft-delete the album first",
+      });
+    }
+
+    const trackCount = await Track.count({ where: { albumId: id } });
+    if (trackCount > 0) {
+      blockers.push({ type: "tracks", count: trackCount });
+    }
+
+    const launch = await AlbumLaunch.findOne({ where: { albumId: id } });
+    if (launch) {
+      blockers.push({ type: "launch", status: launch.status });
+    }
+
+    const payments = await Payment.count({ where: { albumId: id } });
+    if (payments > 0) {
+      blockers.push({ type: "payments", count: payments });
+    }
+
+    return res.json({
+      success: true,
+      data: {
+        canHardDelete: blockers.length === 0,
+        blockers,
+      },
+    });
+  } catch (err) {
+    console.error("admin.albumDeletePreflight error:", err);
+    return res.status(500).json({
+      success: false,
+      message: err.message || "Could not check album",
+    });
+  }
+};
+
+// ─── Safe delete: hard delete ──────────────────────────────
+exports.hardDeleteAlbum = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const album = await Album.findByPk(id);
+    if (!album) {
+      return res.status(404).json({
+        success: false,
+        message: "Album not found",
+      });
+    }
+
+    if (!album.is_deleted) {
+      return res.status(409).json({
+        success: false,
+        message: "Album must be soft-deleted before permanent deletion",
+        code: "NOT_SOFT_DELETED",
+      });
+    }
+
+    const trackCount = await Track.count({ where: { albumId: id } });
+    if (trackCount > 0) {
+      return res.status(409).json({
+        success: false,
+        message: `Album has ${trackCount} track(s). Remove them first.`,
+        code: "HAS_TRACKS",
+      });
+    }
+
+    const launch = await AlbumLaunch.findOne({ where: { albumId: id } });
+    if (launch) {
+      return res.status(409).json({
+        success: false,
+        message: `Album has a ${launch.status} launch. Cancel it first.`,
+        code: "HAS_LAUNCH",
+      });
+    }
+
+    const payments = await Payment.count({ where: { albumId: id } });
+    if (payments > 0) {
+      return res.status(409).json({
+        success: false,
+        message: `Album has ${payments} payment record(s). Cannot hard-delete.`,
+        code: "HAS_PAYMENTS",
+      });
+    }
+
+    await album.destroy({ force: true });
+
+    return res.json({
+      success: true,
+      message: "Album permanently deleted",
+    });
+  } catch (err) {
+    console.error("admin.hardDeleteAlbum error:", err);
+
+    if (err.name === "SequelizeForeignKeyConstraintError") {
+      return res.status(409).json({
+        success: false,
+        message: "Album still has related records. Remove them first.",
+        code: "FK_BLOCKED",
+      });
+    }
+
+    return res.status(500).json({
+      success: false,
+      message: err.message || "Could not delete album",
     });
   }
 };

@@ -12,6 +12,7 @@ const CorporateProfile = require("../models/CorporateProfile");
 const Album = require("../models/Album");
 const Plaque = require("../models/Plaque");
 const News = require("../models/News");
+const PlaqueTier = require("../models/PlaqueTier");
 
 const PRESIGN_TTL_SECONDS = 300;
 
@@ -168,14 +169,26 @@ const FIELD_MAP = {
   album: { Album: { key: "cover_art", flag: "hasCustomCoverArt" } },
   plaque:{ Plaque:{ key: "plaqueImageUrl", flag: null } },
   news:  { News:  { key: "image", flag: null } },
+  tier:  { PlaqueTier: { key: "imageUrl", flag: null } },
 };
 
 async function targetModel(userId, slot, context) {
+  // Record-targeted slots — model is resolved by the id passed in context
   if (slot === "album")  return Album.findByPk(context.albumId);
   if (slot === "plaque") return Plaque.findByPk(context.plaqueId);
   if (slot === "news")   return News.findByPk(context.newsId);
+  if (slot === "tier")   return PlaqueTier.findByPk(context.tierId);
 
   if (slot === "avatar" || slot === "cover") {
+    const isAdmin =
+      context.role === "admin" || context.role === "super_admin";
+
+    // Admin uploading on behalf of a specific artist
+    if (isAdmin && context.artistId) {
+      return Artist.findByPk(context.artistId);
+    }
+
+    // Self uploads — resolve the caller's own record
     const role = context.role;
     if (role === "artist")    return Artist.findOne({ where: { userId } });
     if (role === "corporate") return CorporateProfile.findOne({ where: { userId } });
@@ -185,6 +198,13 @@ async function targetModel(userId, slot, context) {
 }
 
 async function commit(userId, slot, key, context) {
+  console.log("[media.commit]", {
+    userId,
+    slot,
+    context,
+    isAdmin: context.role === "admin" || context.role === "super_admin",
+    hasArtistId: Boolean(context.artistId),
+  });
   const model = await targetModel(userId, slot, context);
   if (!model) throw new AppError(404, "Target record not found");
 
@@ -202,6 +222,8 @@ async function commit(userId, slot, key, context) {
     if (slot === "plaque" && model.ownerId !== userId) {
       throw new AppError(403, "Not your plaque");
     }
+    // avatar/cover for non-admins: the model was resolved via
+    // `where: { userId }`, so ownership is implicit. No extra check needed.
   }
 
   const oldUrl = model[map.key];

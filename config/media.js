@@ -40,6 +40,15 @@ const SLOTS = {
     aspect: null,
     types: ["image/jpeg", "image/png", "image/webp"],
   },
+  tier: {
+  prefix: "tiers",
+  types: ["image/jpeg", "image/png", "image/webp"],
+  maxBytes: 5 * 1024 * 1024,
+  minDim: 300,
+  maxDim: 2000,
+  aspect: [3, 4],
+  aspectTolerance: 0.05,
+},
 };
 
 module.exports = { SLOTS };
