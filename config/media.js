@@ -10,7 +10,7 @@ const SLOTS = {
   cover: {
     prefix: "covers",
     maxBytes: 8 * 1024 * 1024,
-    minDim: 1200,
+    minDim: 720,
     maxDim: 6000,
     aspect: [16, 9],
     aspectTolerance: 0.05,
@@ -19,7 +19,7 @@ const SLOTS = {
   album: {
     prefix: "albums",
     maxBytes: 8 * 1024 * 1024,
-    minDim: 500,           // ← allow 500×500
+    minDim: 500,
     maxDim: 4000,
     aspect: null,
     types: ["image/jpeg", "image/png", "image/webp"],
@@ -27,7 +27,7 @@ const SLOTS = {
   plaque: {
     prefix: "plaques",
     maxBytes: 8 * 1024 * 1024,
-    minDim: 600,
+    minDim: 300,           // ← was 600
     maxDim: 4000,
     aspect: null,
     types: ["image/jpeg", "image/png", "image/webp"],

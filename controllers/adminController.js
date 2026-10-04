@@ -1,7 +1,7 @@
 const { Op, fn, col } = require("sequelize");
 const {
   sequelize,
-  User, Artist, Album, AlbumLaunch, Track, Payment, Plaque,
+  User, Artist, Album, AlbumLaunch, Track, Payment, Plaque, Genre,
 } = require("../models");
 
 // ─── Overview stats ─────────────────────────────────────────
@@ -133,6 +133,7 @@ exports.listAlbums = async (req, res) => {
       published,
       featured,
       deleted = "false",
+      demo,                     // ← accepts 'true' | 'false' | undefined
       albumType,
       page = "1",
       limit = "25",
@@ -146,6 +147,8 @@ exports.listAlbums = async (req, res) => {
     if (featured === "false") where.is_featured = false;
     if (deleted === "true") where.is_deleted = true;
     else if (deleted === "false") where.is_deleted = false;
+    if (demo === "true") where.isDemo = true;      // ← new
+    if (demo === "false") where.isDemo = false;    // ← new
     if (albumType) where.albumType = albumType;
 
     const pageNum = Math.max(1, parseInt(page, 10) || 1);
@@ -158,6 +161,12 @@ exports.listAlbums = async (req, res) => {
           model: Artist,
           as: "artist",
           attributes: ["id", "stageName", "name"],
+        },
+        {
+          model: Genre,
+          as: "Genres",
+          attributes: ["id", "name"],
+          through: { attributes: [] },
         },
       ],
       order: [["createdAt", "DESC"]],
@@ -194,6 +203,12 @@ exports.getAlbum = async (req, res) => {
           attributes: ["id", "stageName", "name"],
         },
         { model: AlbumLaunch, as: "launch" },
+        {
+          model: Genre,
+          as: "Genres",
+          attributes: ["id", "name"],
+          through: { attributes: [] },
+        },
       ],
     });
 
@@ -234,6 +249,7 @@ exports.updateAlbum = async (req, res) => {
       "publisher",
       "credits",
       "affiliation",
+      "isDemo",
     ];
 
     for (const key of allowed) {
@@ -244,10 +260,33 @@ exports.updateAlbum = async (req, res) => {
 
     await album.save();
 
+    // Genres via the many-to-many association
+    if (Array.isArray(req.body.genres)) {
+      const genreIds = await resolveGenreIds(req.body.genres);
+      await album.setGenres(genreIds);
+    }
+
+    // Re-fetch with includes so the response has fresh related data
+    const fresh = await Album.findByPk(req.params.id, {
+      include: [
+        {
+          model: Artist,
+          as: "artist",
+          attributes: ["id", "stageName", "name"],
+        },
+        {
+          model: Genre,
+          as: "Genres",
+          attributes: ["id", "name"],
+          through: { attributes: [] },
+        },
+      ],
+    });
+
     return res.json({
       success: true,
       message: "Album updated",
-      data: album.get({ plain: true }),
+      data: fresh.get({ plain: true }),
     });
   } catch (err) {
     console.error("admin.updateAlbum error:", err);
@@ -257,6 +296,46 @@ exports.updateAlbum = async (req, res) => {
     });
   }
 };
+
+// ─── Helper: resolve mixed names/ids/objects into genre ids ─
+async function resolveGenreIds(items) {
+  const ids = [];
+  for (const item of items) {
+    if (item == null) continue;
+
+    // Object shapes (e.g. round-tripped from a formatted response)
+    if (typeof item === "object") {
+      if (typeof item.id === "string" && item.id) {
+        ids.push(item.id);
+        continue;
+      }
+      if (typeof item.name === "string" && item.name.trim()) {
+        const [g] = await Genre.findOrCreate({
+          where: { name: item.name.trim() },
+        });
+        ids.push(g.id);
+        continue;
+      }
+      continue;   // unrecognized shape — skip
+    }
+
+    const s = String(item).trim();
+    if (!s) continue;
+
+    // Looks like a UUID → treat as id
+    if (
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(s)
+    ) {
+      ids.push(s);
+      continue;
+    }
+
+    // Treat as a name → find or create
+    const [genre] = await Genre.findOrCreate({ where: { name: s } });
+    ids.push(genre.id);
+  }
+  return ids;
+}
 
 // ─── Publish / unpublish ───────────────────────────────────
 exports.publishAlbum = async (req, res) => {
