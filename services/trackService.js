@@ -89,6 +89,20 @@ class TrackService {
 
     return track;
   }
+
+  // ─── NEW: restore a soft-deleted track ────────────────────
+  async restoreTrack(id) {
+    const track = await Track.findOne({ where: { id } });
+    if (!track) throw new Error("Track not found");
+
+    if (track.isDeleted === false) return track;
+
+    const albumId = track.albumId;
+    await track.update({ isDeleted: false });
+    await this._recomputeAlbumCounters(albumId);
+
+    return track;
+  }
 }
 
 module.exports = new TrackService();

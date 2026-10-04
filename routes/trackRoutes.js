@@ -72,6 +72,21 @@ router.post('/bulk', authMiddleware, artistMiddleware, async (req, res) => {
   }
 });
 
+// ── Soft-delete / restore (MUST be before /:id) ────────────
+router.patch(
+  '/:id/soft-delete',
+  authMiddleware,
+  artistMiddleware,
+  trackController.softDeleteTrack
+);
+
+router.patch(
+  '/:id/restore',
+  authMiddleware,
+  artistMiddleware,
+  trackController.restoreTrack
+);
+
 // ── Param routes ───────────────────────────────────────────
 router.get(   '/:id',  trackController.getTrackById);
 router.post(  '/',     authMiddleware, artistMiddleware, trackController.createTrack);

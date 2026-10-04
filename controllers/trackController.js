@@ -93,6 +93,97 @@ class TrackController {
       res.status(status).json({ success: false, message: error.message });
     }
   }
+
+  // ─── NEW: soft-delete (reversible) ────────────────────────
+  async softDeleteTrack(req, res) {
+    try {
+      const { id } = req.params;
+      const { Track } = require("../models");
+
+      const track = await Track.findByPk(id);
+      if (!track) {
+        return res.status(404).json({
+          success: false,
+          message: "Track not found",
+        });
+      }
+
+      if (track.isDeleted === true) {
+        return res.json({
+          success: true,
+          message: "Track already soft-deleted",
+          data: track,
+        });
+      }
+
+      track.isDeleted = true;
+      await track.save();
+
+      // Recompute album counters so hidden tracks stop counting
+      try {
+        if (track.albumId && typeof trackService._recomputeAlbumCounters === "function") {
+          await trackService._recomputeAlbumCounters(track.albumId);
+        }
+      } catch (e) {
+        console.warn("softDeleteTrack: counter recompute failed:", e.message);
+      }
+
+      return res.json({
+        success: true,
+        message: "Track soft-deleted",
+        data: track,
+      });
+    } catch (error) {
+      console.error("softDeleteTrack error:", error);
+      const status = error.message?.toLowerCase().includes("not found") ? 404 : 500;
+      return res.status(status).json({ success: false, message: error.message });
+    }
+  }
+
+  // ─── NEW: restore ─────────────────────────────────────────
+  async restoreTrack(req, res) {
+    try {
+      const { id } = req.params;
+      const { Track } = require("../models");
+
+      const track = await Track.findByPk(id);
+      if (!track) {
+        return res.status(404).json({
+          success: false,
+          message: "Track not found",
+        });
+      }
+
+      if (track.isDeleted === false) {
+        return res.json({
+          success: true,
+          message: "Track already active",
+          data: track,
+        });
+      }
+
+      track.isDeleted = false;
+      await track.save();
+
+      try {
+        if (track.albumId && typeof trackService._recomputeAlbumCounters === "function") {
+          await trackService._recomputeAlbumCounters(track.albumId);
+        }
+      } catch (e) {
+        console.warn("restoreTrack: counter recompute failed:", e.message);
+      }
+
+      return res.json({
+        success: true,
+        message: "Track restored",
+        data: track,
+      });
+    } catch (error) {
+      console.error("restoreTrack error:", error);
+      const status = error.message?.toLowerCase().includes("not found") ? 404 : 500;
+      return res.status(status).json({ success: false, message: error.message });
+    }
+  }
 }
 
 module.exports = new TrackController();
