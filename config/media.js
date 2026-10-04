@@ -17,13 +17,13 @@ const SLOTS = {
     types: ["image/jpeg", "image/png", "image/webp"],
   },
   album: {
-  prefix: "albums",
-  maxBytes: 8 * 1024 * 1024,
-  minDim: 1000,
-  maxDim: 4000,
-  aspect: null,          // ← was [1, 1]
-  types: ["image/jpeg", "image/png", "image/webp"],
-},
+    prefix: "albums",
+    maxBytes: 8 * 1024 * 1024,
+    minDim: 500,           // ← allow 500×500
+    maxDim: 4000,
+    aspect: null,
+    types: ["image/jpeg", "image/png", "image/webp"],
+  },
   plaque: {
     prefix: "plaques",
     maxBytes: 8 * 1024 * 1024,
@@ -41,14 +41,14 @@ const SLOTS = {
     types: ["image/jpeg", "image/png", "image/webp"],
   },
   tier: {
-  prefix: "tiers",
-  types: ["image/jpeg", "image/png", "image/webp"],
-  maxBytes: 5 * 1024 * 1024,
-  minDim: 300,
-  maxDim: 2000,
-  aspect: [3, 4],
-  aspectTolerance: 0.05,
-},
+    prefix: "tiers",
+    types: ["image/jpeg", "image/png", "image/webp"],
+    maxBytes: 5 * 1024 * 1024,
+    minDim: 300,
+    maxDim: 2000,
+    aspect: [3, 4],
+    aspectTolerance: 0.05,
+  },
 };
 
 module.exports = { SLOTS };
