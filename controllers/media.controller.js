@@ -38,13 +38,24 @@ exports.presign = async (req, res, next) => {
 exports.confirm = async (req, res, next) => {
   try {
     const { slot } = req.params;
-    const { key, ...context } = req.body;
+    const { key, ...bodyContext } = req.body;
+
+    const base = await resolveContext(req);
+
+    // Body context wins when it explicitly provides a value;
+    // resolveContext fills the rest. role is always forced to the
+    // authenticated user's real role — never trust body.role.
+    const context = {
+      ...base,
+      ...bodyContext,
+      role: req.user.role,
+    };
 
     const result = await media.confirm({
       userId: req.user.id,
       slot,
       key,
-      context: { ...context, ...(await resolveContext(req)) },
+      context,
     });
 
     res.json({ success: true, ...result });
@@ -55,10 +66,18 @@ exports.reset = async (req, res, next) => {
   try {
     const { slot } = req.params;
 
+    const base = await resolveContext(req);
+
+    const context = {
+      ...base,
+      ...req.body,
+      role: req.user.role,
+    };
+
     const result = await media.reset({
       userId: req.user.id,
       slot,
-      context: { ...req.body, ...(await resolveContext(req)) },
+      context,
     });
 
     res.json({ success: true, ...result });
