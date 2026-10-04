@@ -241,6 +241,8 @@ app.use("/api/auth", authLimiter, require("./routes/authRoutes"));
 app.use("/api/users", require("./routes/media.routes"));
 app.use("/api/users", require("./routes/userRoutes"));
 app.use("/api/admin", adminRoutes);
+// wherever you mount adminRoutes
+app.use("/api/admin/plaques", require("./routes/adminPlaqueRoutes"));
 app.use("/api/artists", require("./routes/artistRoutes"));
 app.use("/api/albums/:albumId/launch", require("./routes/albumLaunchRoutes"));
 app.use("/api/albums", require("./routes/albumRoutes"));
